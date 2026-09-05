@@ -44,6 +44,15 @@
     letter-spacing:.04em;text-transform:uppercase;margin-left:8px;vertical-align:1px;
   }
   header.top .pill-row{display:flex;gap:7px;flex-wrap:wrap;margin-top:6px;}
+  header.top .feedback-link{
+    margin-left:auto;flex:none;align-self:flex-start;
+    display:inline-flex;align-items:center;gap:6px;
+    background:rgba(255,255,255,0.22);color:#fff;text-decoration:none;
+    border-radius:999px;padding:7px 13px;font-size:0.78rem;font-weight:700;
+    white-space:nowrap;transition:background .15s;
+  }
+  header.top .feedback-link:hover{background:rgba(255,255,255,0.34);}
+  @media print{header.top .feedback-link{display:none !important;}}
   header.top .pill-row span{
     display:inline-flex;align-items:center;gap:5px;
     background:rgba(255,255,255,0.2);border-radius:999px;padding:3px 11px 3px 8px;font-size:0.76rem;font-weight:700;
@@ -200,8 +209,11 @@
         <span>📚 Wortschatz</span>
         <span>🧩 Grammatik</span>
         <span>🎧 Hören</span>
+        <span>📖 Lesen</span>
       </div>
     </div>
+    <a class="feedback-link" target="_blank" rel="noopener"
+       href="https://docs.google.com/forms/d/e/1FAIpQLSeji_Gi5iASf-XnitHoQeQJ3p-PIcKqEmzZ3_i9qlRs9Hx5Tw/viewform">💬 Feedback</a>
   </header>
 
   <!-- START SCREEN -->
@@ -2861,7 +2873,11 @@ function startLesenTrack(track){
   showScreen("lesen-task");
 }
 function startLesenQuestions(){
-  state.lesenQueue = shuffle(state.lesenTrack.questions);
+  // Bei Lesen bleibt die Reihenfolge der Fragen bewusst wie im Text (z.B. Lücke
+  // 40, 41, 42, ... oder Situation 1, 2, 3, ...) - anders als bei Hören/Grammatik
+  // wird hier NICHT gemischt, weil die Aufgaben sich auf den oben stehenden
+  // Referenztext beziehen und in dessen Reihenfolge bearbeitet werden sollen.
+  state.lesenQueue = state.lesenTrack.questions.slice();
   state.lesenQIndex = 0; state.lesenScore = 0;
   document.getElementById("lesenQuestionsBlock").style.display = "block";
   renderLesenQuestion();
