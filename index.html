@@ -85,11 +85,23 @@
   .menu-item{
     background:var(--card);border:2px solid var(--green-100);border-radius:14px;padding:16px;
     cursor:pointer;text-align:left;box-shadow:var(--shadow);transition:border-color .15s ease, transform .12s ease;
+    position:relative;
   }
   .menu-item:hover{border-color:var(--green-500);transform:translateY(-2px);}
   .menu-item .emoji{font-size:1.6rem;}
   .menu-item h3{margin:8px 0 4px;font-size:1.02rem;color:var(--green-900);}
   .menu-item p{margin:0;font-size:0.85rem;color:#5b6d62;}
+  .news-badge{
+    position:absolute;top:12px;right:12px;background:var(--red);color:#fff;
+    font-size:0.68rem;font-weight:800;letter-spacing:.03em;padding:2px 9px;border-radius:999px;
+  }
+  .news-entry{
+    border-left:3px solid var(--green-500);padding:2px 0 2px 14px;margin-bottom:18px;
+  }
+  .news-entry:last-child{margin-bottom:0;}
+  .news-entry .news-date{font-size:0.76rem;color:#7c8b81;font-weight:700;letter-spacing:.03em;}
+  .news-entry h3{margin:2px 0 4px;font-size:1rem;color:var(--green-900);}
+  .news-entry p{margin:0;font-size:0.9rem;color:#3d4a41;}
   .pill{
     display:inline-block;background:var(--green-100);color:var(--green-900);
     border-radius:999px;padding:3px 12px;font-size:0.78rem;font-weight:700;letter-spacing:.02em;
@@ -210,6 +222,7 @@
         <span>🧩 Grammatik</span>
         <span>🎧 Hören</span>
         <span>📖 Lesen</span>
+        <span>✍️ Schreiben</span>
       </div>
     </div>
     <a class="feedback-link" id="feedbackLink" target="_blank" rel="noopener"
@@ -287,6 +300,12 @@
     </div>
 
     <div class="menu-grid">
+      <div class="menu-item" data-go="neuigkeiten" style="grid-column:1/-1;">
+        <span class="emoji">🆕</span>
+        <h3>Neuigkeiten</h3>
+        <p>Was ist neu in der App?</p>
+        <span class="news-badge" id="newsBadge" style="display:none;">NEU</span>
+      </div>
       <div class="menu-item" data-go="flashcards">
         <span class="emoji">🗂️</span>
         <h3>Karteikarten</h3>
@@ -326,11 +345,29 @@
         <h3>Lesen</h3>
         <p>Lies den Text und beantworte die Fragen.</p>
       </div>
+      <div class="menu-item" data-go="schreiben">
+        <span class="emoji">✍️</span>
+        <h3>Schreiben</h3>
+        <p>Bearbeite eine Schreibaufgabe und erhalte eine Rückmeldung.</p>
+      </div>
       <div class="menu-item" data-go="wordlist" style="grid-column:1/-1;">
         <span class="emoji">📋</span>
         <h3>Meine Wortliste</h3>
         <p>Alle Wörter des Kapitels mit deinen eigenen Übersetzungen – zum Ausdrucken.</p>
       </div>
+    </div>
+  </section>
+
+  <!-- NEUIGKEITEN -->
+  <section id="screen-neuigkeiten" class="screen">
+    <div class="card">
+      <div class="topline" style="margin-bottom:0;">
+        <p style="margin:0;">🆕 Neuigkeiten in der App</p>
+        <button class="btn-ghost" data-back="menu" style="font-size:0.82rem;">← Zurück zum Menü</button>
+      </div>
+    </div>
+    <div class="card" id="newsListWrap">
+      <div id="newsList"></div>
     </div>
   </section>
 
@@ -2301,6 +2338,7 @@ function selectChapter(k){
   document.getElementById("menuChapterHint").textContent = "Kapitel " + k + " · " + meta.title + ": " + meta.themes;
   document.getElementById("wordlistTitle").textContent = "Meine Wortliste – Kapitel " + k;
   renderScoreBadges();
+  updateNewsBadge();
   showScreen("menu");
 }
 document.getElementById("btnSwitchChapter").addEventListener("click", ()=>{
@@ -2386,6 +2424,51 @@ function sendLesenBeacon(track, score, total){
   }catch(e){ /* Übermittlung fehlgeschlagen - Übung läuft trotzdem normal weiter */ }
 }
 
+/* ---------------- NEUIGKEITEN ----------------
+   Kurze, chronologische Liste, in der neue Funktionen der App kurz erklärt
+   werden. Neuer Eintrag = einfach oben in NEWS ergänzen (neuestes zuerst).
+   Solange der neueste Eintrag noch nicht angesehen wurde, zeigt die Kachel
+   ein "NEU"-Badge (Speicherung pro Gerät im localStorage, keine Übertragung). */
+const NEWS = [
+  {
+    id: "2026-09-schreiben",
+    date: "September 2026",
+    title: "Neu: Schreibaufgaben direkt aus der App",
+    text: "Über die Kachel „✍️ Schreiben“ kannst du jetzt eine passende Schreibaufgabe zum aktuellen Kapitel bearbeiten und automatisch eine Rückmeldung dazu bekommen. Es gibt mehrere Aufgaben zur Auswahl, damit es abwechslungsreich bleibt."
+  }
+];
+const NEWS_SEEN_KEY = "b1_news_last_seen_id";
+function renderNews(){
+  const wrap = document.getElementById("newsList");
+  wrap.innerHTML = "";
+  NEWS.forEach(entry=>{
+    const div = document.createElement("div");
+    div.className = "news-entry";
+    div.innerHTML =
+      '<div class="news-date">' + entry.date + '</div>' +
+      '<h3>' + entry.title + '</h3>' +
+      '<p>' + entry.text + '</p>';
+    wrap.appendChild(div);
+  });
+}
+function updateNewsBadge(){
+  const badge = document.getElementById("newsBadge");
+  if(!badge) return;
+  let lastSeen = "";
+  try{ lastSeen = localStorage.getItem(NEWS_SEEN_KEY) || ""; }catch(e){}
+  const hasUnread = NEWS.length > 0 && NEWS[0].id !== lastSeen;
+  badge.style.display = hasUnread ? "inline-block" : "none";
+}
+function openNews(){
+  renderNews();
+  showScreen("neuigkeiten");
+  if(NEWS.length > 0){
+    try{ localStorage.setItem(NEWS_SEEN_KEY, NEWS[0].id); }catch(e){}
+  }
+  updateNewsBadge();
+}
+updateNewsBadge();
+
 /* ---------------- MENU -> SECTION PICKER ---------------- */
 document.querySelectorAll(".menu-item[data-go]").forEach(item=>{
   item.addEventListener("click", ()=>{
@@ -2393,9 +2476,43 @@ document.querySelectorAll(".menu-item[data-go]").forEach(item=>{
     if(mode === "wordlist"){ renderWordlist(); showScreen("wordlist"); return; }
     if(mode === "hoeren"){ renderTrackList(); showScreen("hoeren-list"); return; }
     if(mode === "lesen"){ renderLesenList(); showScreen("lesen-list"); return; }
+    if(mode === "schreiben"){ openSchreibtraining(); return; }
+    if(mode === "neuigkeiten"){ openNews(); return; }
     openSectionPicker(mode);
   });
 });
+
+/* ---------------- SCHREIBEN -> Verlinkung zur Schreibtraining-App ----------------
+   Öffnet die separate Schreibtraining-App (schreibtraining.jurtzik-lernapps.de)
+   in einem neuen Tab und gibt Name, Kurs sowie - falls für das aktuelle Kapitel
+   hinterlegt - eine passende Aufgabe direkt mit (siehe Deep-Linking in deren app.js).
+   Ist für ein Kapitel noch keine Aufgabe hinterlegt, öffnet die Schreibtraining-App
+   ganz normal mit ihrer eigenen Aufgabenauswahl. */
+const SCHREIBTRAINING_BASE_URL = "https://schreibtraining.jurtzik-lernapps.de/";
+const SCHREIBTRAINING_KURS = "B1 Oberndorf (KL T. Jurtzik)";
+/* Pro Kapitel eine oder mehrere passende Aufgaben-IDs aus der
+   Schreibtraining-App (tasks.js) hinterlegen. Bei mehreren IDs wird bei
+   jedem Aufruf zufällig eine davon ausgewählt (mehr Abwechslung für TN,
+   die die App öfter nutzen). Ist für ein Kapitel noch keine Aufgabe
+   hinterlegt, öffnet die Schreibtraining-App ganz normal mit ihrer
+   eigenen Aufgabenauswahl. */
+const SCHREIBEN_TASK_BY_CHAPTER = {
+  1: ["b1-dtz-005", "b1-dtz-006", "b1-dtz-007"]
+  // weitere Kapitel ergänzen, sobald passende Aufgaben in der
+  // Schreibtraining-App (tasks.js) angelegt sind, z.B. 2: ["b1-dtz-00x"]
+};
+function openSchreibtraining(){
+  const params = new URLSearchParams();
+  if(state.name) params.set("name", state.name);
+  params.set("kurs", SCHREIBTRAINING_KURS);
+  let taskIds = SCHREIBEN_TASK_BY_CHAPTER[state.chapter];
+  if(taskIds && !Array.isArray(taskIds)) taskIds = [taskIds];
+  if(taskIds && taskIds.length){
+    const taskId = taskIds[Math.floor(Math.random() * taskIds.length)];
+    params.set("taskId", taskId);
+  }
+  window.open(SCHREIBTRAINING_BASE_URL + "?" + params.toString(), "_blank", "noopener");
+}
 function openSectionPicker(mode){
   const wrap = document.getElementById("sectionButtons");
   wrap.innerHTML = "";
