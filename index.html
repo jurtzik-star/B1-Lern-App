@@ -212,7 +212,7 @@
         <span>📖 Lesen</span>
       </div>
     </div>
-    <a class="feedback-link" target="_blank" rel="noopener"
+    <a class="feedback-link" id="feedbackLink" target="_blank" rel="noopener"
        href="https://docs.google.com/forms/d/e/1FAIpQLSeji_Gi5iASf-XnitHoQeQJ3p-PIcKqEmzZ3_i9qlRs9Hx5Tw/viewform">💬 Feedback</a>
   </header>
 
@@ -221,9 +221,9 @@
     <div class="card">
       <p style="margin-top:0;">Willkommen! Bevor es losgeht, ein paar kurze Fragen.</p>
       <p id="welcomeBack" class="hint-text" style="display:none;color:var(--green-700);font-weight:600;text-align:left;margin:0 0 12px;"></p>
-      <label for="inpName">Wie heißt du?</label>
-      <input type="text" id="inpName" placeholder="Dein Vorname">
-      <p id="nameError" class="hint-text" style="display:none;color:var(--red);text-align:left;margin:-10px 0 14px;">Bitte gib deinen Vornamen ein, damit deine Lehrkraft sehen kann, wer schon geübt hat.</p>
+      <label for="inpName">Wie heißt du? (Vor- und Nachname)</label>
+      <input type="text" id="inpName" placeholder="Vor- und Nachname">
+      <p id="nameError" class="hint-text" style="display:none;color:var(--red);text-align:left;margin:-10px 0 14px;">Bitte gib deinen vollständigen Namen ein, damit deine Lehrkraft sehen kann, wer schon geübt hat.</p>
 
       <label for="selLang">Was ist deine Muttersprache?</label>
       <select id="selLang">
@@ -255,7 +255,7 @@
         <input type="text" id="inpOtherLang" placeholder="z. B. Amharisch, Tigrinya ...">
       </div>
 
-      <p class="hint-text" style="margin-bottom:0;">Dein Vorname und deine Übungszeit werden an deine Lehrkraft übermittelt, damit sie euren Lernfortschritt sehen kann. Deine Übersetzungen werden nur auf diesem Gerät gespeichert (Browser-Speicher), damit sie beim nächsten Öffnen noch da sind.</p>
+      <p class="hint-text" style="margin-bottom:0;">Dein Name und deine Übungszeit werden an deine Lehrkraft übermittelt, damit sie euren Lernfortschritt sehen kann. Deine Übersetzungen werden nur auf diesem Gerät gespeichert (Browser-Speicher), damit sie beim nächsten Öffnen noch da sind.</p>
       <div class="row-btns">
         <button class="btn-primary" id="btnStart">Los geht's →</button>
       </div>
@@ -2162,11 +2162,25 @@ document.getElementById("selLang").addEventListener("change", (e)=>{
   document.getElementById("otherLangWrap").style.display = e.target.value==="Andere" ? "block" : "none";
 });
 
+/* Feedback-Link: Namen aus dem Startbildschirm als vorausgefüllten Wert
+   ins Google-Formular übernehmen, damit er nicht doppelt eingetippt
+   werden muss (Feld-ID "Name" im Formular: entry.1635921128). */
+const FEEDBACK_BASE_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeji_Gi5iASf-XnitHoQeQJ3p-PIcKqEmzZ3_i9qlRs9Hx5Tw/viewform";
+function updateFeedbackLink(name){
+  const link = document.getElementById("feedbackLink");
+  if(!link) return;
+  const trimmed = (name||"").trim();
+  link.href = trimmed
+    ? FEEDBACK_BASE_URL + "?usp=pp_url&entry.1635921128=" + encodeURIComponent(trimmed)
+    : FEEDBACK_BASE_URL;
+}
+
 /* Gespeicherte Angaben (Name/Sprache) vorausfüllen, damit man sie nicht bei
    jedem Besuch neu eingeben muss. */
 (function prefillFromStorage(){
   if(!SAVED) return;
   if(SAVED.name) document.getElementById("inpName").value = SAVED.name;
+  updateFeedbackLink(SAVED.name);
   const sel = document.getElementById("selLang");
   if(SAVED.rawLang && [...sel.options].some(o=>o.value===SAVED.rawLang)){
     sel.value = SAVED.rawLang;
@@ -2195,6 +2209,7 @@ document.getElementById("inpName").addEventListener("input", ()=>{
     inp.classList.remove("input-error");
     document.getElementById("nameError").style.display = "none";
   }
+  updateFeedbackLink(inp.value);
 });
 document.getElementById("btnStart").addEventListener("click", ()=>{
   const nameInput = document.getElementById("inpName");
