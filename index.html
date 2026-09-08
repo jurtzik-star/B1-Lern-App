@@ -2201,14 +2201,16 @@ document.getElementById("selLang").addEventListener("change", (e)=>{
 
 /* Feedback-Link: Namen aus dem Startbildschirm als vorausgefüllten Wert
    ins Google-Formular übernehmen, damit er nicht doppelt eingetippt
-   werden muss (Feld-ID "Name" im Formular: entry.1635921128). */
-const FEEDBACK_BASE_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeji_Gi5iASf-XnitHoQeQJ3p-PIcKqEmzZ3_i9qlRs9Hx5Tw/viewform";
+   werden muss (Feld-ID "Name" im eigenen B1-Feedback-Formular:
+   entry.1308738824). Eigenes, ausführlicheres Formular, getrennt von
+   BSK-B1+ und BSK-B2 (siehe Ordner "Feedback-Formulare Lern-Apps"). */
+const FEEDBACK_BASE_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdCTMp2d2P4jQwx--M_qsb3xfss1Z8PeCxM7yOVab3kT_dpsQ/viewform";
 function updateFeedbackLink(name){
   const link = document.getElementById("feedbackLink");
   if(!link) return;
   const trimmed = (name||"").trim();
   link.href = trimmed
-    ? FEEDBACK_BASE_URL + "?usp=pp_url&entry.1635921128=" + encodeURIComponent(trimmed)
+    ? FEEDBACK_BASE_URL + "?usp=pp_url&entry.1308738824=" + encodeURIComponent(trimmed)
     : FEEDBACK_BASE_URL;
 }
 
