@@ -106,6 +106,17 @@
   .news-entry .news-date{font-size:0.76rem;color:#7c8b81;font-weight:700;letter-spacing:.03em;}
   .news-entry h3{margin:2px 0 4px;font-size:1rem;color:var(--green-900);}
   .news-entry p{margin:0;font-size:0.9rem;color:#3d4a41;}
+  .wissen-titel{font-size:1.2rem;font-weight:800;color:var(--green-900);margin:0 0 6px;}
+  .wissen-einleitung{font-size:0.9rem;color:#5b6d62;margin:0 0 16px;}
+  .wissen-wort{border-top:1px solid var(--green-100);padding:14px 0;}
+  .wissen-wort:first-child{border-top:none;padding-top:0;}
+  .wissen-wort .wort{font-weight:800;color:var(--green-900);font-size:1.05rem;margin-bottom:4px;}
+  .wissen-wort .erklaerung{font-size:0.92rem;color:#3d4a41;margin:0 0 8px;line-height:1.5;}
+  .wissen-beispiele{background:var(--green-50);border:2px dashed var(--green-500);border-radius:10px;padding:10px 14px 10px 30px;margin:0;}
+  .wissen-beispiele li{font-style:italic;color:var(--green-900);font-size:0.88rem;margin-bottom:5px;}
+  .wissen-beispiele li:last-child{margin-bottom:0;}
+  .wissen-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:18px;flex-wrap:wrap;}
+  .wissen-counter{font-size:0.78rem;color:#7c8b81;font-weight:700;letter-spacing:.02em;}
   .pill{
     display:inline-block;background:var(--green-100);color:var(--green-900);
     border-radius:999px;padding:3px 12px;font-size:0.78rem;font-weight:700;letter-spacing:.02em;
@@ -332,6 +343,12 @@
         <p>Was ist neu in der App?</p>
         <span class="news-badge" id="newsBadge" style="display:none;">NEU</span>
       </div>
+      <div class="menu-item" data-go="wissen">
+        <span class="emoji">💡</span>
+        <h3>Gut zu wissen</h3>
+        <p>Feine Unterschiede zwischen ähnlichen Wörtern erklärt.</p>
+        <span class="news-badge" id="wissenBadge" style="display:none;">NEU</span>
+      </div>
       <div class="menu-item" data-go="flashcards">
         <span class="emoji">🗂️</span>
         <h3>Karteikarten</h3>
@@ -404,6 +421,24 @@
     </div>
     <div class="card" id="newsListWrap">
       <div id="newsList"></div>
+    </div>
+  </section>
+
+  <!-- GUT ZU WISSEN -->
+  <section id="screen-wissen" class="screen">
+    <div class="card">
+      <div class="topline" style="margin-bottom:0;">
+        <p style="margin:0;">💡 Gut zu wissen</p>
+        <button class="btn-ghost" data-back="menu" style="font-size:0.82rem;">← Zurück zum Menü</button>
+      </div>
+    </div>
+    <div class="card" id="wissenCardWrap">
+      <div id="wissenContent"></div>
+      <div class="wissen-nav">
+        <button class="btn-secondary" id="btnWissenPrev" style="font-size:0.85rem;">← Voriges Thema</button>
+        <span class="wissen-counter" id="wissenCounter"></span>
+        <button class="btn-secondary" id="btnWissenNext" style="font-size:0.85rem;">Nächstes Thema →</button>
+      </div>
     </div>
   </section>
 
@@ -2038,7 +2073,309 @@ const LESEN_TRACKS = [
       {q:"Lücke (44):", answer:"mit", wrong:["dabei","her"], hint:"mitbringen ist ein trennbares Verb."},
       {q:"Lücke (45):", answer:"Ihnen", wrong:["dir","euch"], hint:"Höfliche Anrede, Dativ."}
     ]
+  },
+  {
+    id:"k2-lesen-teil3", k:2, teil:3,
+    title:"Teil 3 · Aushang: Theater-Workshop für Anfänger",
+    taskLabel:"Text lesen: Richtig oder falsch?",
+    referenceHtml:
+      '<div style="line-height:1.7;">' +
+      '<p style="font-weight:700;color:var(--green-900);margin:0 0 8px;">Schnupperkurs Schauspiel – jetzt anmelden!</p>' +
+      '<p>Der Theaterverein „Rampenlicht e. V.“ bietet ab dem 12. Oktober einen Schnupperkurs für alle an, die noch nie auf einer Bühne gestanden haben. An sechs Abenden (immer dienstags, 19–21 Uhr) lernen Sie die Grundlagen der Schauspielkunst kennen: Stimme, Körpersprache und erste kleine Szenen.</p>' +
+      '<p>Der Kurs findet im Vereinsheim in der Marktstraße 14 statt. Vorkenntnisse sind nicht nötig, Deutschkenntnisse ab Niveau B1 werden empfohlen. Die Teilnahme kostet 45 Euro für alle sechs Termine; Vereinsmitglieder zahlen nur die Hälfte.</p>' +
+      '<p>Wer danach Lust auf mehr hat, kann bei der nächsten Produktion des Vereins mitmachen, die im Frühjahr auf die Bühne kommt. Anmeldung bis zum 5. Oktober per E-Mail an info@rampenlicht-verein.de.</p></div>',
+    questions:[
+      {q:"Der Schnupperkurs richtet sich an Menschen mit viel Bühnenerfahrung.", answer:"falsch", wrong:["richtig"], hint:"Der Kurs ist für Menschen gedacht, die noch nie auf einer Bühne gestanden haben."},
+      {q:"Der Kurs findet an sechs Dienstagabenden statt.", answer:"richtig", wrong:["falsch"], hint:"Im Text steht: „immer dienstags“, an sechs Abenden."},
+      {q:"Vereinsmitglieder zahlen für den Kurs mehr als andere Teilnehmende.", answer:"falsch", wrong:["richtig"], hint:"Mitglieder zahlen laut Text nur die Hälfte, also weniger."},
+      {q:"Nach dem Schnupperkurs kann man bei einer echten Theaterproduktion mitmachen.", answer:"richtig", wrong:["falsch"], hint:"Der Text erwähnt die Produktion im Frühjahr, bei der man mitmachen kann."},
+      {q:"Die Anmeldung ist telefonisch möglich.", answer:"falsch", wrong:["richtig"], hint:"Laut Text meldet man sich per E-Mail an, nicht telefonisch."}
+    ]
+  },
+  {
+    id:"k2-lesen-teil4", k:2, teil:4,
+    title:"Teil 4 · Bericht: Ein Blick hinter die Kulissen",
+    taskLabel:"Text lesen und Fragen beantworten",
+    referenceHtml:
+      '<div style="line-height:1.7;">' +
+      '<p style="font-weight:700;color:var(--green-900);margin:0 0 8px;">Was passiert eigentlich hinter der Bühne?</p>' +
+      '<p>Wenn der Vorhang aufgeht, sehen die Zuschauerinnen und Zuschauer nur einen kleinen Teil der Arbeit, die hinter einer Theateraufführung steckt. Hinter den Kulissen laufen viele Fäden zusammen. Die Regie entscheidet, wie eine Szene wirken soll, und probt wochenlang mit den Schauspielerinnen und Schauspielern. Für das Bühnenbild sorgt eine eigene Abteilung: Sie baut aus Holz, Stoff und Farbe ganze Welten, von einem Wald bis zu einem Königsschloss.</p>' +
+      '<p>Eine besonders wichtige, aber oft unterschätzte Aufgabe hat die Requisite. Sie sorgt dafür, dass jeder Gegenstand, den die Darstellerinnen und Darsteller auf der Bühne brauchen, zur richtigen Zeit am richtigen Platz liegt – vom Brief bis zum Fahrrad. Auch die Maske spielt eine große Rolle: Mit Schminke und Perücken verwandeln die Maskenbildnerinnen und Maskenbildner junge Menschen in alte Figuren oder lassen Wunden täuschend echt aussehen.</p>' +
+      '<p>Während der Vorstellung sitzt außerdem jemand an der Technik und sorgt für Licht und Ton – ein falscher Knopfdruck, und die ganze Stimmung einer Szene kippt. All diese Berufe bleiben meist unsichtbar, doch ohne sie gäbe es keine einzige Vorstellung.</p></div>',
+    questions:[
+      {q:"Wer entscheidet, wie eine Szene auf der Bühne wirken soll?", answer:"Die Regie", wrong:["Die Requisite","Die Maske"], hint:"Diese Person probt wochenlang mit den Schauspielerinnen und Schauspielern."},
+      {q:"Woraus baut die Abteilung für das Bühnenbild ihre Welten?", answer:"Aus Holz, Stoff und Farbe", wrong:["Nur aus Papier","Aus Metall und Glas"], hint:"Im Text werden drei Materialien genannt."},
+      {q:"Was ist die Aufgabe der Requisite laut dem Text?", answer:"Dafür sorgen, dass jeder gebrauchte Gegenstand zur richtigen Zeit am richtigen Platz ist", wrong:["Die Kostüme nähen","Die Bühne aufbauen"], hint:"Vom Brief bis zum Fahrrad – es geht um Gegenstände, nicht um Kleidung oder den Bühnenaufbau."},
+      {q:"Womit verwandelt die Maske die Darstellerinnen und Darsteller?", answer:"Mit Schminke und Perücken", wrong:["Mit besonderen Kostümen","Mit Musik und Licht"], hint:"Es geht um das Aussehen des Gesichts und der Haare."},
+      {q:"Was kann passieren, wenn an der Technik ein falscher Knopf gedrückt wird?", answer:"Die Stimmung der Szene kann kippen", wrong:["Der Vorhang geht nicht auf","Die Schauspieler vergessen ihren Text"], hint:"Der letzte Absatz beschreibt, was bei einem Fehler an Licht oder Ton passieren kann."}
+    ]
+  },
+  {
+    id:"k2-lesen-teil5", k:2, teil:5,
+    title:"Teil 5 · E-Mail von der Theatergruppe",
+    taskLabel:"Lücken im Brief ergänzen",
+    referenceHtml:
+      '<div style="line-height:1.7;">' +
+      '<p>Liebe Frau Beck,</p>' +
+      '<p>vielen Dank für Ihre Teilnahme am Vorsprechen letzte Woche. Wir freuen uns, Ihnen mitteilen zu können, dass Sie die Rolle der Nachbarin <b>(40)</b> ___ bekommen haben.</p>' +
+      '<p>Die erste Probe findet am kommenden Montag um 18 Uhr statt, <b>(41)</b> ___ wir mit den anderen Rollen bereits begonnen haben. Bitte bringen Sie Ihr Textbuch <b>(42)</b> ___, damit wir gleich anfangen können.</p>' +
+      '<p><b>(43)</b> ___ Sie am Montag verhindert sind, sagen Sie bitte rechtzeitig Bescheid. Die Premiere ist für den 14. März geplant, bis dahin proben wir jeden Montag und Donnerstag.</p>' +
+      '<p>Wir wünschen <b>(44)</b> ___ schon jetzt viel Freude an der Rolle und freuen <b>(45)</b> ___ auf die gemeinsame Probenzeit.</p>' +
+      '<p>Herzliche Grüße<br>Ihre Theatergruppe „Rampenlicht“</p></div>',
+    questions:[
+      {q:"Lücke (40):", answer:"im Stück", wrong:["am Stück","zum Stück"], hint:"Feste Wendung: eine Rolle in einem Stück haben/bekommen."},
+      {q:"Lücke (41):", answer:"obwohl", wrong:["weil","damit"], hint:"Ein Gegensatz: Die Probe ist erst jetzt, obwohl mit anderen Rollen schon begonnen wurde."},
+      {q:"Lücke (42):", answer:"mit", wrong:["dabei","her"], hint:"mitbringen ist ein trennbares Verb."},
+      {q:"Lücke (43):", answer:"Falls", wrong:["Obwohl","Während"], hint:"Es geht um eine Bedingung/Möglichkeit."},
+      {q:"Lücke (44):", answer:"Ihnen", wrong:["dir","euch"], hint:"Höfliche Anrede, Dativ."},
+      {q:"Lücke (45):", answer:"uns", wrong:["sich","euch"], hint:"sich freuen auf: 1. Person Plural, da die Theatergruppe schreibt."}
+    ]
   }
+,
+  {
+    id:"k3-lesen-teil1", k:3, teil:1,
+    title:"Teil 1 · Infoportal \"Ehrenamt in unserer Stadt\"",
+    taskLabel:"Verzeichnis lesen und die passende Rubrik finden",
+    referenceHtml:
+      '<p style="margin:0 0 8px;font-weight:700;color:var(--green-900);">Verzeichnis</p>' +
+      '<ul style="margin:0;padding-left:20px;line-height:1.7;">' +
+      '<li>Erste Schritte im Ehrenamt</li><li>Kinder &amp; Jugendliche begleiten</li>' +
+      '<li>Ältere Menschen unterstützen</li><li>Tiere &amp; Umwelt</li>' +
+      '<li>Sport &amp; Vereinsleben</li><li>Kultur &amp; Nachbarschaft</li>' +
+      '<li>Versicherung &amp; Aufwandsentschädigung</li><li>Zertifikate &amp; Nachweise</li></ul>',
+    questions:[
+      {q:"Sie möchten wissen, ob man für ehrenamtliche Arbeit versichert ist.", answer:"Versicherung & Aufwandsentschädigung", wrong:["Erste Schritte im Ehrenamt","andere Rubrik"], hint:"Es geht um den rechtlichen/finanziellen Schutz, nicht um den Einstieg."},
+      {q:"Sie möchten einmal pro Woche mit einer einsamen älteren Nachbarin spazieren gehen.", answer:"Ältere Menschen unterstützen", wrong:["Kultur & Nachbarschaft","andere Rubrik"], hint:"Es geht konkret um Unterstützung für ältere Menschen."},
+      {q:"Sie möchten eine schriftliche Bestätigung für Ihr freiwilliges Engagement bekommen.", answer:"Zertifikate & Nachweise", wrong:["Erste Schritte im Ehrenamt","andere Rubrik"], hint:"Es geht um ein Dokument als Nachweis, nicht um den Beginn der Tätigkeit."},
+      {q:"Sie interessieren sich für die Arbeit im örtlichen Tierheim.", answer:"Tiere & Umwelt", wrong:["Sport & Vereinsleben","andere Rubrik"], hint:"Es geht um Tiere, nicht um Sport."},
+      {q:"Sie wissen noch nicht, welches Ehrenamt zu Ihnen passt, und suchen eine erste Orientierung.", answer:"Erste Schritte im Ehrenamt", wrong:["Zertifikate & Nachweise","andere Rubrik"], hint:"Es geht um den Einstieg, nicht um ein bestimmtes Themenfeld."}
+    ]
+  },
+  {
+    id:"k3-lesen-teil2", k:3, teil:2,
+    title:"Teil 2 · Anzeigen zum Ehrenamt",
+    taskLabel:"Situation der passenden Anzeige zuordnen",
+    referenceHtml:
+      '<p style="margin:0 0 8px;font-weight:700;color:var(--green-900);">Anzeigen</p>' +
+      '<ul style="margin:0;padding-left:20px;line-height:1.7;">' +
+      '<li><b>a</b> Vorlesepate für die Stadtbücherei gesucht (1x pro Woche, Kinder ab 5)</li>' +
+      '<li><b>b</b> Fahrdienst für Seniorinnen und Senioren zum Arztbesuch</li>' +
+      '<li><b>c</b> Helferinnen und Helfer für den Wochenmarkt-Infostand</li>' +
+      '<li><b>d</b> Freiwillige für die Nachhilfe in Deutsch (Grundschulkinder)</li>' +
+      '<li><b>e</b> Gassi-Service für Hunde aus dem Tierheim</li>' +
+      '<li><b>f</b> Begleitung für Menschen mit Behinderung zu Freizeitaktivitäten</li>' +
+      '<li><b>g</b> Mitorganisation des Stadtteilfests im Juni</li>' +
+      '<li><b>h</b> Schulung für neue Ehrenamtliche in Erster Hilfe</li></ul>',
+    questions:[
+      {q:"Sie haben ein eigenes Auto und möchten ältere Menschen zu Terminen fahren.", answer:"b", wrong:["c","X"], hint:"Es geht um Fahrten, nicht um einen Infostand."},
+      {q:"Sie mögen Hunde und möchten regelmäßig mit ihnen spazieren gehen.", answer:"e", wrong:["f","X"], hint:"Es geht um Tiere, nicht um Menschen."},
+      {q:"Sie möchten Grundschulkindern beim Deutschlernen helfen.", answer:"d", wrong:["a","X"], hint:"Es geht ums Deutschlernen, nicht ums Vorlesen von Geschichten."},
+      {q:"Sie möchten bei der Planung eines großen Nachbarschaftsfestes mithelfen.", answer:"g", wrong:["c","X"], hint:"Es geht um die Organisation eines Festes, nicht um einen einzelnen Markttag."},
+      {q:"Sie möchten lernen, wie man bei einem Unfall richtig hilft.", answer:"h", wrong:["b","X"], hint:"Es geht um eine Schulung in Erster Hilfe."}
+    ]
+  },
+  {
+    id:"k3-lesen-teil5", k:3, teil:5,
+    title:"Teil 5 · E-Mail von der Freiwilligenagentur",
+    taskLabel:"Lücken im Brief ergänzen",
+    referenceHtml:
+      '<div style="line-height:1.7;">' +
+      '<p>Liebe Frau Nowak,</p>' +
+      '<p>vielen Dank für Ihr Interesse an einem Ehrenamt bei uns. Wir haben Ihnen eine Aufgabe vermittelt, die gut zu Ihren Wünschen passt: Ab dem 3. November <b>(40)</b> ___ Sie einmal pro Woche im Seniorenzentrum vorlesen.</p>' +
+      '<p>Die Leiterin des Zentrums, Frau Herzog, wird Sie am ersten Tag <b>(41)</b> ___ begleiten und Ihnen alles zeigen. <b>(42)</b> ___ Sie kurzfristig verhindert sind, melden Sie sich bitte direkt bei ihr.</p>' +
+      '<p>Für Ihr Engagement erhalten Sie am Jahresende ein Zertifikat, <b>(43)</b> ___ Sie zum Beispiel für Bewerbungen nutzen können. Bitte bringen Sie zum ersten Termin nur gute Laune <b>(44)</b> ___.</p>' +
+      '<p>Wir freuen uns sehr, dass Sie sich engagieren möchten, und wünschen <b>(45)</b> ___ viel Freude dabei.</p>' +
+      '<p>Herzliche Grüße<br>Ihre Freiwilligenagentur</p></div>',
+    questions:[
+      {q:"Lücke (40):", answer:"werden", wrong:["würden","wurden"], hint:"Futur I: werden + Infinitiv."},
+      {q:"Lücke (41):", answer:"persönlich", wrong:["persönliche","persönlichen"], hint:"Adverb, es gibt kein Nomen, das es beschreiben müsste."},
+      {q:"Lücke (42):", answer:"Falls", wrong:["Obwohl","Während"], hint:"Es geht um eine mögliche Bedingung in der Zukunft."},
+      {q:"Lücke (43):", answer:"das", wrong:["die","der"], hint:"Relativpronomen, bezieht sich auf „ein Zertifikat“ (Neutrum, Akkusativ)."},
+      {q:"Lücke (44):", answer:"mit", wrong:["dabei","her"], hint:"mitbringen ist ein trennbares Verb."},
+      {q:"Lücke (45):", answer:"Ihnen", wrong:["dir","euch"], hint:"Höfliche Anrede, Dativ."}
+    ]
+  }
+,
+  {
+    id:"k4-lesen-teil3", k:4, teil:3,
+    title:"Teil 3 · Aushang: Geführte Wanderung im Naturpark",
+    taskLabel:"Text lesen: Richtig oder falsch?",
+    referenceHtml:
+      '<div style="line-height:1.7;">' +
+      '<p style="font-weight:700;color:var(--green-900);margin:0 0 8px;">Geführte Wanderung: Auf den Spuren des Luchses</p>' +
+      '<p>Der Naturpark Schwarzwald lädt am ersten Samstag im Mai zu einer geführten Wanderung ein. Ein erfahrener Förster erklärt unterwegs, welche Tiere und Pflanzen im Park leben, und berichtet von der Rückkehr des Luchses in die Region.</p>' +
+      '<p>Die Wanderung dauert etwa drei Stunden und ist auch für Familien mit älteren Kindern geeignet, da sie über gut ausgebaute Wege führt. Festes Schuhwerk und wetterfeste Kleidung werden empfohlen. Start ist um 9 Uhr am Parkplatz Hirschkopf.</p>' +
+      '<p>Die Teilnahme ist kostenlos, eine Anmeldung wird aber wegen der begrenzten Plätze empfohlen. Bei starkem Regen fällt die Wanderung aus; in diesem Fall informiert der Naturpark über seine Webseite.</p></div>',
+    questions:[
+      {q:"Die Wanderung wird von einem Förster geleitet.", answer:"richtig", wrong:["falsch"], hint:"Im Text steht ausdrücklich, dass ein erfahrener Förster erklärt und berichtet."},
+      {q:"Die Wanderung führt über sehr schwierige, unebene Wege.", answer:"falsch", wrong:["richtig"], hint:"Der Text sagt, die Wege sind gut ausgebaut und für Familien geeignet."},
+      {q:"Die Teilnahme kostet eine kleine Gebühr.", answer:"falsch", wrong:["richtig"], hint:"Laut Text ist die Teilnahme kostenlos."},
+      {q:"Bei schlechtem Wetter kann die Wanderung ausfallen.", answer:"richtig", wrong:["falsch"], hint:"Bei starkem Regen fällt die Wanderung laut Text aus."},
+      {q:"Eine Anmeldung ist unbedingt nötig, sonst darf man nicht teilnehmen.", answer:"falsch", wrong:["richtig"], hint:"Eine Anmeldung wird nur empfohlen, ist aber nicht zwingend vorgeschrieben."}
+    ]
+  },
+  {
+    id:"k4-lesen-teil4", k:4, teil:4,
+    title:"Teil 4 · Bericht: Immer mehr Menschen zieht es in die Natur",
+    taskLabel:"Text lesen und Fragen beantworten",
+    referenceHtml:
+      '<div style="line-height:1.7;">' +
+      '<p style="font-weight:700;color:var(--green-900);margin:0 0 8px;">Immer mehr Menschen zieht es in die Natur</p>' +
+      '<p>Ob Wandern, Camping oder einfach ein Picknick im Wald: Naturnahe Freizeitaktivitäten sind in den letzten Jahren deutlich beliebter geworden. Reiseveranstalter berichten von einer stark gestiegenen Nachfrage nach Unterkünften abseits der großen Städte, von der einfachen Berghütte bis zum Wohnmobilstellplatz am See.</p>' +
+      '<p>Expertinnen und Experten sehen mehrere Gründe für diesen Trend: Viele Menschen möchten dem stressigen Alltag entkommen und suchen bewusst Ruhe und frische Luft. Gleichzeitig wächst das Interesse am Umweltschutz – wer die Natur schätzt, möchte sie oft auch besser kennenlernen und schützen.</p>' +
+      '<p>Der Trend bringt allerdings auch Herausforderungen mit sich: Besonders beliebte Naturschutzgebiete leiden zeitweise unter zu vielen Besucherinnen und Besuchern. Naturparks reagieren darauf mit Besucherlenkung, etwa durch ausgeschilderte Wege und Informationsangebote, damit Erholung und Naturschutz zusammenpassen.</p></div>',
+    questions:[
+      {q:"Was berichten Reiseveranstalter laut dem Text?", answer:"Eine stark gestiegene Nachfrage nach Unterkünften abseits der Städte", wrong:["Weniger Buchungen für Naturunterkünfte","Steigende Preise nur bei Berghütten"], hint:"Es geht um mehr Interesse an ländlichen/naturnahen Unterkünften."},
+      {q:"Welchen Grund für den Trend nennt der Text zuerst?", answer:"Viele Menschen möchten dem stressigen Alltag entkommen", wrong:["Naturunterkünfte sind günstiger als Hotels","Es gibt weniger Reisen ins Ausland"], hint:"Der zweite Absatz beginnt mit diesem Grund."},
+      {q:"Was hängt laut Text mit dem wachsenden Interesse an der Natur zusammen?", answer:"Ein wachsendes Interesse am Umweltschutz", wrong:["Ein sinkendes Interesse an Reisen","Höhere Preise für Flugreisen"], hint:"Im zweiten Absatz wird ein zweiter Grund genannt."},
+      {q:"Welches Problem entsteht laut Text in beliebten Naturschutzgebieten?", answer:"Sie leiden zeitweise unter zu vielen Besucherinnen und Besuchern", wrong:["Es gibt dort zu wenig Personal","Die Wege sind meist schlecht ausgeschildert"], hint:"Der letzte Absatz beschreibt eine Herausforderung durch den Trend."},
+      {q:"Wie reagieren Naturparks laut dem Text auf dieses Problem?", answer:"Mit Besucherlenkung, zum Beispiel durch ausgeschilderte Wege", wrong:["Indem sie die Parks für Besucher schließen","Indem sie höhere Eintrittspreise verlangen"], hint:"Der letzte Satz nennt konkrete Maßnahmen."}
+    ]
+  },
+  {
+    id:"k4-lesen-teil5", k:4, teil:5,
+    title:"Teil 5 · E-Mail: Bestätigung der Ferienwohnung",
+    taskLabel:"Lücken im Brief ergänzen",
+    referenceHtml:
+      '<div style="line-height:1.7;">' +
+      '<p>Liebe Familie Roth,</p>' +
+      '<p>vielen Dank für Ihre Buchung. Hiermit bestätigen wir Ihnen die Ferienwohnung „Waldblick“ vom 12. bis 19. Juli. Die Schlüsselübergabe <b>(40)</b> ___ am Anreisetag ab 15 Uhr statt.</p>' +
+      '<p>Die Wohnung liegt direkt am Waldrand, sodass Sie viele Wanderwege <b>(41)</b> ___ der Haustür aus erreichen können. <b>(42)</b> ___ Sie Fragen zu Wandertouren in der Umgebung haben, hängt bei uns eine Wanderkarte im Eingangsbereich.</p>' +
+      '<p>Bitte bringen Sie zur Anreise Ihren Personalausweis <b>(43)</b> ___, damit wir den Meldeschein ausfüllen können. Haustiere sind nach Absprache willkommen.</p>' +
+      '<p>Wir wünschen <b>(44)</b> ___ schon jetzt einen erholsamen Aufenthalt und freuen <b>(45)</b> ___ auf Ihren Besuch.</p>' +
+      '<p>Mit freundlichen Grüßen<br>Ferienwohnungen Waldblick</p></div>',
+    questions:[
+      {q:"Lücke (40):", answer:"findet", wrong:["kommt","macht"], hint:"Feste Wendung: etwas findet statt."},
+      {q:"Lücke (41):", answer:"von", wrong:["ab","mit"], hint:"von der Haustür aus – feste Wendung für den Ausgangspunkt."},
+      {q:"Lücke (42):", answer:"Falls", wrong:["Obwohl","Während"], hint:"Es geht um eine mögliche Bedingung."},
+      {q:"Lücke (43):", answer:"mit", wrong:["dabei","her"], hint:"mitbringen ist ein trennbares Verb."},
+      {q:"Lücke (44):", answer:"Ihnen", wrong:["dir","euch"], hint:"Höfliche Anrede, Dativ."},
+      {q:"Lücke (45):", answer:"uns", wrong:["sich","euch"], hint:"sich freuen auf: 1. Person Plural, da die Vermietung schreibt."}
+    ]
+  }
+,
+  {
+    id:"k5-lesen-teil1", k:5, teil:1,
+    title:"Teil 1 · Infoportal \"Auswandern – gut vorbereitet\"",
+    taskLabel:"Verzeichnis lesen und die passende Rubrik finden",
+    referenceHtml:
+      '<p style="margin:0 0 8px;font-weight:700;color:var(--green-900);">Verzeichnis</p>' +
+      '<ul style="margin:0;padding-left:20px;line-height:1.7;">' +
+      '<li>Visum &amp; Aufenthaltstitel</li><li>Umzug &amp; Transport</li>' +
+      '<li>Wohnen im Zielland</li><li>Kontakt zur Familie halten</li>' +
+      '<li>Arbeiten im Ausland</li><li>Kinder &amp; Schule</li>' +
+      '<li>Sprache lernen vor Ort</li><li>Rückkehr &amp; Heimweh</li></ul>',
+    questions:[
+      {q:"Sie möchten wissen, welche Dokumente Sie für die Einreise in Ihr neues Land brauchen.", answer:"Visum & Aufenthaltstitel", wrong:["Umzug & Transport","andere Rubrik"], hint:"Es geht um offizielle Papiere für die Einreise, nicht um den Transport der Möbel."},
+      {q:"Ihre Kinder sollen im neuen Land eine passende Schule finden.", answer:"Kinder & Schule", wrong:["Wohnen im Zielland","andere Rubrik"], hint:"Es geht konkret um die Schulsituation der Kinder."},
+      {q:"Sie vermissen Ihre Familie in der alten Heimat sehr stark.", answer:"Rückkehr & Heimweh", wrong:["Kontakt zur Familie halten","andere Rubrik"], hint:"Es geht um das Gefühl des Heimwehs, nicht nur um den regelmäßigen Kontakt."},
+      {q:"Sie möchten regelmäßig mit Ihren Eltern videotelefonieren.", answer:"Kontakt zur Familie halten", wrong:["Rückkehr & Heimweh","andere Rubrik"], hint:"Es geht um praktische Möglichkeiten, in Kontakt zu bleiben, nicht um das Gefühl selbst."},
+      {q:"Sie möchten am neuen Wohnort einen Sprachkurs finden.", answer:"Sprache lernen vor Ort", wrong:["Arbeiten im Ausland","andere Rubrik"], hint:"Es geht ums Sprachenlernen, nicht um die Arbeitssuche."}
+    ]
+  },
+  {
+    id:"k5-lesen-teil2", k:5, teil:2,
+    title:"Teil 2 · Anzeigen für Auswandernde",
+    taskLabel:"Situation der passenden Anzeige zuordnen",
+    referenceHtml:
+      '<p style="margin:0 0 8px;font-weight:700;color:var(--green-900);">Anzeigen</p>' +
+      '<ul style="margin:0;padding-left:20px;line-height:1.7;">' +
+      '<li><b>a</b> Umzugsfirma mit Erfahrung bei Auslandsumzügen</li>' +
+      '<li><b>b</b> Onlineforum: Deutsche im Ausland tauschen sich aus</li>' +
+      '<li><b>c</b> Beratung zur Anerkennung von Zeugnissen im Ausland</li>' +
+      '<li><b>d</b> Zwischenspeicher-Lager für Möbel (kurz- und langfristig)</li>' +
+      '<li><b>e</b> Sprachtandem: Muttersprachler gesucht</li>' +
+      '<li><b>f</b> Kurs "Interkulturelle Kompetenz für Auswandernde"</li>' +
+      '<li><b>g</b> Internationale Schule mit deutschsprachigem Zweig</li>' +
+      '<li><b>h</b> Beratungsstelle für Rückkehrende</li></ul>',
+    questions:[
+      {q:"Sie möchten sich mit anderen Auswandernden über ihre Erfahrungen austauschen.", answer:"b", wrong:["e","X"], hint:"Es geht um Austausch über Erfahrungen, nicht ums Sprachenlernen."},
+      {q:"Sie möchten Ihre Möbel für ein paar Monate sicher unterstellen, bis Sie eine Wohnung gefunden haben.", answer:"d", wrong:["a","X"], hint:"Es geht um die Lagerung von Möbeln, nicht um den Transport selbst."},
+      {q:"Sie möchten wissen, ob Ihr Schulabschluss im neuen Land anerkannt wird.", answer:"c", wrong:["g","X"], hint:"Es geht um die Anerkennung eines Zeugnisses."},
+      {q:"Ihre Kinder sollen weiterhin auch auf Deutsch unterrichtet werden.", answer:"g", wrong:["c","X"], hint:"Es geht um eine Schule mit deutschsprachigem Angebot."},
+      {q:"Sie sind nach vielen Jahren im Ausland wieder zurück und brauchen Unterstützung.", answer:"h", wrong:["f","X"], hint:"Es geht um die Rückkehr, nicht um die Vorbereitung auf das Ausland."}
+    ]
+  },
+  {
+    id:"k5-lesen-teil5", k:5, teil:5,
+    title:"Teil 5 · E-Mail von der Auswandererberatung",
+    taskLabel:"Lücken im Brief ergänzen",
+    referenceHtml:
+      '<div style="line-height:1.7;">' +
+      '<p>Liebe Frau Petrov,</p>' +
+      '<p>vielen Dank für Ihre Anfrage. Gerne fassen wir Ihnen die wichtigsten Schritte für Ihren geplanten Umzug nach Kanada <b>(40)</b> ___.</p>' +
+      '<p>Zuerst sollten Sie sich um Ihr Visum kümmern, da die Bearbeitung mehrere Monate dauern <b>(41)</b> ___. Parallel dazu können Sie schon mit der Wohnungssuche beginnen. <b>(42)</b> ___ Sie Kinder haben, informieren Sie sich frühzeitig über die Schulanmeldung, denn manche Schulen haben lange Wartelisten.</p>' +
+      '<p>Bitte schicken Sie uns bis Ende des Monats eine Kopie Ihres Reisepasses <b>(43)</b> ___, damit wir mit der Antragstellung beginnen können.</p>' +
+      '<p>Für Rückfragen stehen wir <b>(44)</b> ___ jederzeit zur Verfügung. Wir wünschen <b>(45)</b> ___ einen guten Start in Ihrem neuen Leben.</p>' +
+      '<p>Mit freundlichen Grüßen<br>Ihre Auswandererberatung</p></div>',
+    questions:[
+      {q:"Lücke (40):", answer:"zusammen", wrong:["mit","zu"], hint:"zusammenfassen ist ein trennbares Verb."},
+      {q:"Lücke (41):", answer:"kann", wrong:["darf","muss"], hint:"Es geht um eine Möglichkeit (es kann so lange dauern), keine Pflicht oder Erlaubnis."},
+      {q:"Lücke (42):", answer:"Falls", wrong:["Obwohl","Während"], hint:"Es geht um eine mögliche Bedingung."},
+      {q:"Lücke (43):", answer:"mit", wrong:["dabei","her"], hint:"mitschicken ist ein trennbares Verb."},
+      {q:"Lücke (44):", answer:"Ihnen", wrong:["euch","Sie"], hint:"Höfliche Anrede, Dativ."},
+      {q:"Lücke (45):", answer:"Ihnen", wrong:["dir","euch"], hint:"Höfliche Anrede, Dativ."}
+    ]
+  }
+,
+  {
+    id:"k6-lesen-teil3", k:6, teil:3,
+    title:"Teil 3 · Aushang: Weihnachtsmarkt in der Altstadt",
+    taskLabel:"Text lesen: Richtig oder falsch?",
+    referenceHtml:
+      '<div style="line-height:1.7;">' +
+      '<p style="font-weight:700;color:var(--green-900);margin:0 0 8px;">Weihnachtsmarkt in der Altstadt: 28. November bis 22. Dezember</p>' +
+      '<p>Auch in diesem Jahr öffnet der Weihnachtsmarkt auf dem Marktplatz wieder seine Türen. Über 40 Stände bieten Glühwein, gebrannte Mandeln und Kunsthandwerk an. Neu in diesem Jahr: eine kleine Eisbahn für Kinder und Erwachsene direkt neben dem Rathaus.</p>' +
+      '<p>Der Markt hat sonntags bis donnerstags von 11 bis 20 Uhr geöffnet, freitags und samstags bis 21 Uhr. An den Adventswochenenden gibt es zusätzlich ein Bühnenprogramm mit Chören und einem Kasperletheater für die Kleinsten.</p>' +
+      '<p>Der Eintritt zum Markt ist wie immer kostenlos, für die Eisbahn wird eine kleine Gebühr von 3 Euro pro Stunde erhoben. Am 24. Dezember bleibt der Markt geschlossen.</p></div>',
+    questions:[
+      {q:"Der Weihnachtsmarkt hat mehr als 40 Stände.", answer:"richtig", wrong:["falsch"], hint:"Im Text steht: über 40 Stände."},
+      {q:"Die Eisbahn gab es auch schon in den vergangenen Jahren.", answer:"falsch", wrong:["richtig"], hint:"Der Text nennt die Eisbahn ausdrücklich als Neuheit in diesem Jahr."},
+      {q:"Der Markt hat freitags und samstags länger geöffnet als an anderen Tagen.", answer:"richtig", wrong:["falsch"], hint:"Freitags/samstags bis 21 Uhr, an anderen Tagen nur bis 20 Uhr."},
+      {q:"Für den Eintritt zum Weihnachtsmarkt muss man bezahlen.", answer:"falsch", wrong:["richtig"], hint:"Der Eintritt zum Markt ist laut Text kostenlos, nur die Eisbahn kostet Geld."},
+      {q:"Am 24. Dezember ist der Weihnachtsmarkt geöffnet.", answer:"falsch", wrong:["richtig"], hint:"Der Text sagt ausdrücklich, dass der Markt an diesem Tag geschlossen bleibt."}
+    ]
+  },
+  {
+    id:"k6-lesen-teil4", k:6, teil:4,
+    title:"Teil 4 · Bericht: Weihnachten im Wandel",
+    taskLabel:"Text lesen und Fragen beantworten",
+    referenceHtml:
+      '<div style="line-height:1.7;">' +
+      '<p style="font-weight:700;color:var(--green-900);margin:0 0 8px;">Weihnachten im Wandel</p>' +
+      '<p>Kaum ein Fest ist mit so vielen festen Vorstellungen verbunden wie Weihnachten: der geschmückte Baum, das gemeinsame Essen, die Geschenke unterm Baum. Doch wie eine aktuelle Umfrage zeigt, feiern immer mehr Menschen das Fest anders, als es ihre Eltern oder Großeltern taten.</p>' +
+      '<p>Besonders bei jüngeren Menschen wird Weihnachten seltener nach strengen Traditionen gefeiert. Viele legen mehr Wert auf Zeit mit engen Freundinnen und Freunden statt mit der ganzen Großfamilie, andere verzichten bewusst auf teure Geschenke und schenken lieber ein gemeinsames Erlebnis. Auch der Weihnachtsbaum wird zunehmend individueller: Neben der klassischen Tanne stehen inzwischen bunte, moderne oder sogar selbst gebastelte Bäume in den Wohnzimmern.</p>' +
+      '<p>Trotz aller Veränderungen bleibt für die meisten Befragten ein Kern des Festes gleich: der Wunsch nach Ruhe, Nähe und ein wenig Zeit, die im hektischen Alltag sonst oft fehlt. Wie genau diese Nähe entsteht, entscheidet heute jede Familie zunehmend selbst.</p></div>',
+    questions:[
+      {q:"Was zeigt die im Text genannte Umfrage?", answer:"Immer mehr Menschen feiern Weihnachten anders als frühere Generationen", wrong:["Weihnachten wird von immer weniger Menschen gefeiert","Alle Familien feiern weiterhin genau wie früher"], hint:"Der erste Absatz beschreibt eine Veränderung gegenüber den Eltern und Großeltern."},
+      {q:"Was legen laut Text viele jüngere Menschen mehr Wert auf?", answer:"Zeit mit engen Freundinnen und Freunden statt mit der ganzen Großfamilie", wrong:["Möglichst teure Geschenke","Ein besonders traditionelles Festessen"], hint:"Der zweite Absatz beschreibt diesen Unterschied zuerst."},
+      {q:"Was schenken manche Menschen laut Text lieber als teure Geschenke?", answer:"Ein gemeinsames Erlebnis", wrong:["Geld", "Gutscheine für Kleidung"], hint:"Im zweiten Absatz wird eine Alternative zu teuren Geschenken genannt."},
+      {q:"Wie verändert sich laut Text der Weihnachtsbaum?", answer:"Er wird individueller, z. B. bunt oder selbst gebastelt", wrong:["Er wird immer größer","Er verschwindet ganz aus den Wohnzimmern"], hint:"Neben der klassischen Tanne werden im Text andere Varianten genannt."},
+      {q:"Was bleibt laut dem Text für die meisten Menschen trotz aller Veränderungen gleich?", answer:"Der Wunsch nach Ruhe, Nähe und gemeinsamer Zeit", wrong:["Der Wunsch nach möglichst vielen Geschenken","Der Wunsch, das Fest möglichst traditionell zu feiern"], hint:"Der letzte Absatz nennt den gemeinsamen Kern trotz aller Unterschiede."}
+    ]
+  },
+  {
+    id:"k6-lesen-teil5", k:6, teil:5,
+    title:"Teil 5 · Einladung zur Weihnachtsfeier",
+    taskLabel:"Lücken im Brief ergänzen",
+    referenceHtml:
+      '<div style="line-height:1.7;">' +
+      '<p>Liebe Kolleginnen und Kollegen,</p>' +
+      '<p>wie jedes Jahr möchten wir das Jahresende gemeinsam ausklingen lassen. Die diesjährige Weihnachtsfeier <b>(40)</b> ___ am 18. Dezember ab 18 Uhr im Restaurant „Zur alten Post“ statt.</p>' +
+      '<p>Für das Essen haben wir wieder ein kleines Büfett organisiert, <b>(41)</b> ___ für alle etwas dabei ist. <b>(42)</b> ___ Sie eine Allergie oder Unverträglichkeit haben, geben Sie uns bitte bis zum 10. Dezember Bescheid.</p>' +
+      '<p>Bitte tragen Sie sich bis dahin auch in die Liste im Pausenraum <b>(43)</b> ___, damit wir die richtige Anzahl an Plätzen reservieren können.</p>' +
+      '<p>Wir freuen <b>(44)</b> ___ schon jetzt auf einen schönen, geselligen Abend mit <b>(45)</b> ___ allen.</p>' +
+      '<p>Herzliche Grüße<br>Das Organisationsteam</p></div>',
+    questions:[
+      {q:"Lücke (40):", answer:"findet", wrong:["kommt","macht"], hint:"Feste Wendung: eine Feier findet statt."},
+      {q:"Lücke (41):", answer:"damit", wrong:["obwohl","weil"], hint:"Es wird ein Zweck ausgedrückt: Warum gibt es ein Büfett?"},
+      {q:"Lücke (42):", answer:"Falls", wrong:["Obwohl","Während"], hint:"Es geht um eine mögliche Bedingung."},
+      {q:"Lücke (43):", answer:"ein", wrong:["an","auf"], hint:"sich eintragen ist ein trennbares Verb."},
+      {q:"Lücke (44):", answer:"uns", wrong:["sich","euch"], hint:"sich freuen auf: 1. Person Plural, da das Team schreibt."},
+      {q:"Lücke (45):", answer:"Ihnen", wrong:["euch","dir"], hint:"Höfliche Anrede, Dativ."}
+    ]
+  }
+
 ];
 
 const SECTION_LABELS_BY_CHAPTER = {
@@ -2565,6 +2902,92 @@ function openNews(){
 }
 updateNewsBadge();
 
+/* ---------------- GUT ZU WISSEN ----------------
+   Feine Bedeutungsunterschiede zwischen ähnlichen Wörtern, zum
+   Durchblättern (ein Thema nach dem anderen). Neues Thema = einfach
+   oben in WISSEN ergänzen (neuestes zuerst) - gleiches Prinzip wie
+   bei NEWS oben. Jedes Thema: { id, date, titel, einleitung (optional),
+   woerter: [ { wort, erklaerung, beispiele: [...] }, ... ] }. */
+const WISSEN = [
+  {
+    id: "2026-09-kennen-wissen",
+    date: "September 2026",
+    titel: "kennen, wissen",
+    einleitung: "Zwei Verben, die im Deutschen oft verwechselt werden.",
+    woerter: [
+      {
+        wort: "kennen",
+        erklaerung: "Man benutzt kennen für Personen, Orte oder Dinge, die man schon einmal getroffen, gesehen oder besucht hat. Nach kennen kommt immer ein Nomen oder Pronomen (kennen + Akkusativ).",
+        beispiele: [
+          "Ich kenne Herrn Schmidt schon lange.",
+          "Kennst du dieses Restaurant?",
+          "Wir kennen die Stadt gut, wir wohnen schon zehn Jahre hier."
+        ]
+      },
+      {
+        wort: "wissen",
+        erklaerung: "Man benutzt wissen für Fakten, Informationen oder Antworten. Nach wissen kommt meistens ein ganzer Satz (dass-Satz, W-Frage) oder das kleine Wort es/das – kein einfaches Nomen für eine Person oder einen Ort.",
+        beispiele: [
+          "Ich weiß, dass er morgen kommt.",
+          "Weißt du, wie spät es ist?",
+          "Das wusste ich nicht!"
+        ]
+      }
+    ]
+  }
+];
+const WISSEN_SEEN_KEY = "b1_wissen_last_seen_id";
+let wissenIndex = 0;
+function renderWissenEntry(){
+  const entry = WISSEN[wissenIndex];
+  const content = document.getElementById("wissenContent");
+  if(!entry){ content.innerHTML = "<p>Bald gibt es hier die ersten Themen.</p>"; }
+  else{
+    let html = '<h3 class="wissen-titel">' + entry.titel + '</h3>';
+    if(entry.einleitung) html += '<p class="wissen-einleitung">' + entry.einleitung + '</p>';
+    entry.woerter.forEach(w=>{
+      html += '<div class="wissen-wort"><div class="wort">' + w.wort + '</div><p class="erklaerung">' + w.erklaerung + '</p>';
+      if(w.beispiele && w.beispiele.length){
+        html += '<ul class="wissen-beispiele">' + w.beispiele.map(b=>'<li>'+b+'</li>').join("") + '</ul>';
+      }
+      html += '</div>';
+    });
+    content.innerHTML = html;
+  }
+  const counter = document.getElementById("wissenCounter");
+  if(counter) counter.textContent = WISSEN.length ? ("Thema " + (wissenIndex+1) + " von " + WISSEN.length) : "";
+}
+function updateWissenBadge(){
+  const badge = document.getElementById("wissenBadge");
+  if(!badge) return;
+  let lastSeen = "";
+  try{ lastSeen = localStorage.getItem(WISSEN_SEEN_KEY) || ""; }catch(e){}
+  const hasUnread = WISSEN.length > 0 && WISSEN[0].id !== lastSeen;
+  badge.style.display = hasUnread ? "inline-block" : "none";
+}
+function openWissen(){
+  wissenIndex = 0;
+  renderWissenEntry();
+  showScreen("wissen");
+  if(WISSEN.length > 0){
+    try{ localStorage.setItem(WISSEN_SEEN_KEY, WISSEN[0].id); }catch(e){}
+  }
+  updateWissenBadge();
+}
+const btnWissenPrev = document.getElementById("btnWissenPrev");
+const btnWissenNext = document.getElementById("btnWissenNext");
+if(btnWissenPrev) btnWissenPrev.addEventListener("click", ()=>{
+  if(!WISSEN.length) return;
+  wissenIndex = (wissenIndex - 1 + WISSEN.length) % WISSEN.length;
+  renderWissenEntry();
+});
+if(btnWissenNext) btnWissenNext.addEventListener("click", ()=>{
+  if(!WISSEN.length) return;
+  wissenIndex = (wissenIndex + 1) % WISSEN.length;
+  renderWissenEntry();
+});
+updateWissenBadge();
+
 /* ---------------- MENU -> SECTION PICKER ---------------- */
 document.querySelectorAll(".menu-item[data-go]").forEach(item=>{
   item.addEventListener("click", ()=>{
@@ -2576,6 +2999,7 @@ document.querySelectorAll(".menu-item[data-go]").forEach(item=>{
     if(mode === "sprechen"){ openSprechtraining(); return; }
     if(mode === "lerntagebuch"){ openLerntagebuch(); return; }
     if(mode === "neuigkeiten"){ openNews(); return; }
+    if(mode === "wissen"){ openWissen(); return; }
     openSectionPicker(mode);
   });
 });
