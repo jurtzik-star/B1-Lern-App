@@ -409,6 +409,11 @@
         <h3>Meine Wortliste</h3>
         <p>Alle Wörter des Kapitels mit deinen eigenen Übersetzungen – zum Ausdrucken.</p>
       </div>
+      <div class="menu-item" data-go="kapiteltest" style="grid-column:1/-1;">
+        <span class="emoji">📝</span>
+        <h3>Kapiteltest</h3>
+        <p>Teste am Ende des Kapitels dein Können in Hören, Wortschatz, Lesen, Grammatik und Schreiben – mit direkter Rückmeldung.</p>
+      </div>
     </div>
   </section>
 
@@ -656,6 +661,73 @@
       </div>
       <div class="row-btns" id="matchDoneBtns" style="display:none;justify-content:center;">
         <button class="btn-primary" id="matchAgain">Neue Runde 🔁</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- KAPITELTEST -->
+  <section id="screen-kapiteltest" class="screen">
+    <div class="card">
+      <div class="topline">
+        <button class="btn-ghost" data-back="menu">← Menü</button>
+        <span class="pill" id="ktCounter" style="display:none;">1 / 20</span>
+      </div>
+
+      <div id="ktLockedBlock" style="display:none;">
+        <h2 style="margin-top:0;color:var(--green-900);font-size:1.05rem;">📝 Kapiteltest</h2>
+        <p class="hint-text" style="text-align:left;">Der Kapiteltest für dieses Kapitel ist noch nicht freigeschaltet. Er wird am letzten Unterrichtstag des Kapitels geöffnet – frag gern deine Kursleitung.</p>
+      </div>
+
+      <div id="ktIntroBlock" style="display:none;">
+        <h2 style="margin-top:0;color:var(--green-900);font-size:1.05rem;">📝 Kapiteltest</h2>
+        <p class="hint-text" style="text-align:left;" id="ktIntroCount">Dieser Test prüft Hören, Wortschatz, Lesen, Grammatik und Schreiben – <span id="ktIntroCountNum">20</span> Aufgaben insgesamt. Du bekommst nach jeder Antwort direkte Rückmeldung, am Ende ein Gesamtergebnis. Nimm dir etwas Zeit am Stück.</p>
+        <div class="row-btns" style="justify-content:center;">
+          <button class="btn-primary" id="btnKtStart">Test starten ▶️</button>
+        </div>
+      </div>
+
+      <div id="ktRunningBlock" style="display:none;">
+        <p class="hint-text" style="text-align:left;margin:0 0 6px;font-weight:600;color:var(--green-900);" id="ktPartLabel">—</p>
+        <div class="progress-wrap"><div class="progress-bar" id="ktProgress"></div></div>
+        <audio controls class="listen-audio" id="ktAudio" style="display:none;"></audio>
+        <div class="lesen-reference" id="ktReference" style="display:none;"></div>
+        <p class="hint-text" style="text-align:left;" id="ktInstruction"></p>
+        <p class="fill-sentence" id="ktSentence">—</p>
+        <div class="quiz-options" id="ktOptions"></div>
+        <div class="feedback" id="ktFeedback"></div>
+      </div>
+
+      <div id="ktSchreibenBlock" style="display:none;">
+        <p class="hint-text" style="text-align:left;margin:0 0 6px;font-weight:600;color:var(--green-900);">✍️ Teil: Schreiben</p>
+        <h3 style="margin:0 0 4px;font-size:0.98rem;color:var(--green-900);" id="ktSchreibenTitle">—</h3>
+        <p class="hint-text" style="text-align:left;" id="ktSchreibenSituation">—</p>
+        <ul id="ktSchreibenPunkte" style="margin:0 0 10px;padding-left:20px;font-size:0.92rem;"></ul>
+        <textarea id="ktSchreibenText" rows="8" style="width:100%;box-sizing:border-box;font-family:inherit;font-size:0.95rem;padding:10px;border-radius:8px;border:1px solid var(--green-100);"></textarea>
+        <p class="hint-text" style="text-align:right;margin:4px 0 10px;" id="ktSchreibenWordcount">0 Wörter</p>
+        <div class="row-btns" style="justify-content:center;">
+          <button class="btn-primary" id="btnKtSchreibenSubmit">Abschicken & bewerten lassen</button>
+        </div>
+        <p id="ktSchreibenLoading" style="display:none;text-align:center;" class="hint-text">Wird bewertet … 🤔</p>
+        <div id="ktSchreibenFeedback" style="display:none;margin-top:12px;">
+          <p class="feedback correct" id="ktSchreibenPunkteText"></p>
+          <p class="hint-text" style="text-align:left;" id="ktSchreibenKommentar"></p>
+          <p class="hint-text" style="text-align:left;" id="ktSchreibenHinweisUmfang"></p>
+          <div class="row-btns" style="justify-content:center;">
+            <button class="btn-primary" id="btnKtSchreibenWeiter">Ergebnis ansehen ➡️</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="ktResultBlock" style="display:none;">
+        <div class="score-box">
+          <div style="font-size:2rem;" id="ktResultEmoji">🎉</div>
+          <div class="big"><span id="ktResultScore">0</span>/<span id="ktResultTotal">0</span></div>
+          <p id="ktResultText">Gut gemacht!</p>
+        </div>
+        <div id="ktResultBreakdown" style="font-size:0.9rem;margin:10px 0;"></div>
+        <div class="row-btns" style="justify-content:center;">
+          <button class="btn-secondary" data-back="menu">Zurück zum Menü</button>
+        </div>
       </div>
     </div>
   </section>
@@ -2397,7 +2469,7 @@ const SECTION_LABELS_BY_CHAPTER = {
    "Lese-Ergebnis" in den Google-Formularen ergänzt (entry-IDs unten
    eingetragen) - Lesen-Tracking läuft damit für Kapitel 1-6 vollständig. */
 const FORM_CONFIG = {
-  1: {url:"https://docs.google.com/forms/d/e/1FAIpQLSdA8fEgBiPH8WMP_KFr2WwZC7xMhzbPZAeHOLmXEfYaNllKfg/formResponse", entryName:"entry.1349131443", entryMinutes:"entry.497255741", entryTrack:"entry.732802645", entryResult:"entry.1397230054", entryLeseuebung:"entry.68288610", entryLeseErgebnis:"entry.218708259"},
+  1: {url:"https://docs.google.com/forms/d/e/1FAIpQLSdA8fEgBiPH8WMP_KFr2WwZC7xMhzbPZAeHOLmXEfYaNllKfg/formResponse", entryName:"entry.1349131443", entryMinutes:"entry.497255741", entryTrack:"entry.732802645", entryResult:"entry.1397230054", entryLeseuebung:"entry.68288610", entryLeseErgebnis:"entry.218708259", entryTestErgebnis:"entry.722797430"},
   2: {url:"https://docs.google.com/forms/d/e/1FAIpQLSdBLlHrWkg16Cp304BdbmafDa9bBc25g9uv6-18O8SMGSA6Mg/formResponse", entryName:"entry.1059793990", entryMinutes:"entry.484509951", entryTrack:"entry.1504220219", entryResult:"entry.1737597850", entryLeseuebung:"entry.1784745108", entryLeseErgebnis:"entry.2117317377"},
   3: {url:"https://docs.google.com/forms/d/e/1FAIpQLSe6c0v7E2kO6S2pnTTJanR2e-CATpg_VmHBWLa7M-tiHrH2mw/formResponse", entryName:"entry.1349131443", entryMinutes:"entry.497255741", entryTrack:"entry.732802645", entryResult:"entry.1397230054", entryLeseuebung:"entry.953879750", entryLeseErgebnis:"entry.428923870"},
   4: {url:"https://docs.google.com/forms/d/e/1FAIpQLSeZkyLf4l6x8zOGndk3FIcMCDH9ni-9w4S5YogTn08hsPnaqg/formResponse", entryName:"entry.1349131443", entryMinutes:"entry.497255741", entryTrack:"entry.732802645", entryResult:"entry.1397230054", entryLeseuebung:"entry.1590662338", entryLeseErgebnis:"entry.1831681849"},
@@ -2440,6 +2512,99 @@ const CURRENT_CHAPTER = 1;
 /* Alle bereits gebauten Kapitel, aufsteigend. Neue Kapitel-Nummer hier
    ergänzen, sobald ihr Wortschatz oben in VOCAB usw. eingefügt wurde. */
 const RELEASED_CHAPTERS = [1, 2, 3, 4, 5, 6];
+
+/* ---------------- KAPITELTEST ----------------
+   Ein Kapiteltest pro Kapitel (Hören/Wortschatz/Lesen/Grammatik/Schreiben in
+   einem Durchgang, angelehnt an das Testheft des Verlags, aber komplett
+   abgewandelt - keine Inhalte 1:1 aus dem Original übernommen). Anders als
+   RELEASED_CHAPTERS (schaltet die normalen Übungen frei, sobald ein Kapitel
+   im Unterricht beginnt) soll der Kapiteltest erst am LETZTEN Unterrichtstag
+   des jeweiligen Kapitels sichtbar werden. Deshalb ein eigenes, bewusst
+   leeres Array: Thomas trägt die Kapitelnummer hier erst ein, wenn das
+   Kapitel im Unterricht fertig behandelt wurde. Bis dahin zeigt die
+   Kapiteltest-Kachel im Menü den Hinweis "noch nicht freigeschaltet". */
+const TEST_RELEASED_CHAPTERS = [];
+
+/* KAPITELTEST_DATA: pro Kapitel ein Eintrag mit "parts" (Hören/Wortschatz/
+   Lesen/Grammatik - Mehrfachauswahl-Aufgaben im selben {q,answer,wrong,hint}-
+   Format wie überall sonst in der App) und "schreiben" (ein offener
+   Schreibauftrag, der über den Cloudflare Worker der Schreibtraining-App KI-
+   bewertet wird, siehe submitKtSchreiben()). Alle Texte/Aufgaben sind eigene,
+   abgewandelte Formulierungen zu den Kapitelthemen - keine Übernahme aus dem
+   Testheft des Verlags. */
+const KAPITELTEST_DATA = {
+  1: {
+    parts: [
+      {
+        label: "Teil 1 · Hören",
+        instruction: "Hör dir das Gespräch an. Richtig oder falsch?",
+        audio: "audio/kapiteltest-k1/track1.mp3",
+        items: [
+          {q:"Vor seinem Auslandssemester konnte Tim schon sehr gut Italienisch.", answer:"Falsch", wrong:["Richtig"], hint:"Tim spricht am Anfang des Gesprächs über seine Sprachkenntnisse vor dem Auslandssemester."},
+          {q:"Tim durfte die mündlichen Prüfungen auf Englisch machen.", answer:"Richtig", wrong:["Falsch"], hint:"Tim erzählt, wie die Prüfungen an der Gastuniversität abliefen."},
+          {q:"Tim hat in der Nähe der Uni gewohnt.", answer:"Falsch", wrong:["Richtig"], hint:"Tim beschreibt, wo er während des Auslandssemesters gewohnt hat."},
+          {q:"Tim hat das Auslandssemester genutzt, um das Land zu entdecken.", answer:"Richtig", wrong:["Falsch"], hint:"Tim erzählt am Ende, was er neben dem Studium noch gemacht hat."}
+        ]
+      },
+      {
+        label: "Teil 2 · Wortschatz",
+        instruction: "Welches Wort passt in die Lücke?",
+        items: [
+          {q:"Für das Auslandssemester musste Sofia bestimmte ___ erfüllen, zum Beispiel gute Sprachkenntnisse.", answer:"Voraussetzungen", wrong:["Erfahrungen","Zeugnisse"], hint:"Bedingungen, die vorher erfüllt sein müssen."},
+          {q:"Nach dem Auslandsjahr hatte Ben viele neue ___ gesammelt.", answer:"Erfahrungen", wrong:["Voraussetzungen","Ausbildung"], hint:"Dinge, die man erlebt und aus denen man gelernt hat."},
+          {q:"Ohne finanzielle ___ könnten sich viele Studierende das Auslandssemester nicht leisten.", answer:"Förderung", wrong:["Bewerbung","Miete"], hint:"Finanzielle Unterstützung, z. B. durch ein Stipendium."},
+          {q:"In der neuen Stadt hat Laura mit zwei anderen Studentinnen eine ___ gegründet.", answer:"Wohngemeinschaft", wrong:["Vorlesung","Prüfung"], hint:"Mehrere Personen teilen sich eine Wohnung."},
+          {q:"Für die Bewerbung um den Studienplatz im Ausland musste Paul seinen ___ aktualisieren.", answer:"Lebenslauf", wrong:["Stundenplan","Mietvertrag"], hint:"Dokument mit dem beruflichen/schulischen Werdegang."}
+        ]
+      },
+      {
+        label: "Teil 3 · Lesen",
+        instruction: "Lies den Text. Richtig oder falsch?",
+        referenceHtml: "<p>Nach den ersten zwei Wochen im neuen Job lud Frau Berger, eine Kollegin aus der Buchhaltung, ihr ganzes Team zu sich nach Hause zum Abendessen ein. Viele freuten sich, einige waren unsicher: Muss man bei so einer Einladung etwas mitbringen? Und wie spät sollte man kommen?</p><p>In Deutschland ist es üblich, eine Kleinigkeit mitzubringen, wenn man privat eingeladen wird – zum Beispiel Blumen, eine Flasche Wein oder eine kleine Süßigkeit für die Kinder, falls welche da sind. Pünktlichkeit ist wichtig, aber man sollte nicht zu früh kommen: Am besten trifft man fünf bis zehn Minuten nach der genannten Uhrzeit ein, damit die Gastgeberin noch in Ruhe die letzten Vorbereitungen treffen kann.</p><p>Am Ende des Abends bedankt man sich persönlich bei der Gastgeberin, bevor man geht – eine kurze Nachricht am nächsten Tag kommt ebenfalls gut an.</p>",
+        items: [
+          {q:"Frau Berger arbeitet in der Buchhaltung.", answer:"Richtig", wrong:["Falsch"], hint:"Steht gleich im ersten Satz."},
+          {q:"Man sollte bei einer privaten Einladung nichts mitbringen.", answer:"Falsch", wrong:["Richtig"], hint:"Der Text nennt Beispiele, was man mitbringen kann."},
+          {q:"Man sollte möglichst pünktlich oder sogar etwas früher als vereinbart kommen.", answer:"Falsch", wrong:["Richtig"], hint:"Der Text empfiehlt, etwas später als die genannte Uhrzeit zu kommen."},
+          {q:"Am Ende bedankt man sich persönlich bei der Gastgeberin.", answer:"Richtig", wrong:["Falsch"], hint:"Steht im letzten Satz."},
+          {q:"Eine Nachricht am nächsten Tag ist unhöflich.", answer:"Falsch", wrong:["Richtig"], hint:"Der Text sagt, das komme gut an."}
+        ]
+      },
+      {
+        label: "Teil 4 · Grammatik (irgendwo/irgendwer/irgendwann/irgendetwas)",
+        instruction: "Welches Wort passt in die Lücke?",
+        items: [
+          {q:"Ich habe meinen Schlüssel verloren – er muss ___ in der Wohnung liegen.", answer:"irgendwo", wrong:["irgendwann","irgendetwas"], hint:"Gesucht wird ein unbestimmter Ort."},
+          {q:"Kannst du mir ___ zu essen mitbringen? Ich habe Hunger.", answer:"irgendetwas", wrong:["irgendwer","irgendwo"], hint:"Gesucht wird eine unbestimmte Sache."},
+          {q:"Das Paket kommt bestimmt ___ diese Woche an.", answer:"irgendwann", wrong:["irgendwo","irgendwer"], hint:"Gesucht wird ein unbestimmter Zeitpunkt."},
+          {q:"Hat ___ meinen Regenschirm gesehen?", answer:"irgendwer", wrong:["irgendwo","irgendetwas"], hint:"Gesucht wird eine unbestimmte Person."}
+        ]
+      },
+      {
+        label: "Teil 5 · Grammatik (höfliche Vorschläge mit Konjunktiv II)",
+        instruction: "Welcher Satz klingt höflich?",
+        items: [
+          {q:"Wie schlägt man höflich vor, gemeinsam ins Kino zu gehen?", answer:"Könntest du Lust haben, mit mir ins Kino zu gehen?", wrong:["Du gehst mit mir ins Kino.","Geh mit mir ins Kino!"], hint:"Konjunktiv II mit „könnte“ klingt höflicher als ein Befehl oder eine Feststellung."},
+          {q:"Welcher Satz ist ein höflicher Vorschlag?", answer:"Wir könnten doch am Wochenende zusammen kochen.", wrong:["Wir kochen am Wochenende zusammen.","Kocht am Wochenende zusammen!"], hint:"„könnten“ statt „kochen“ macht aus einer Feststellung einen Vorschlag."},
+          {q:"Wie bittet man höflich um Hilfe?", answer:"Würden Sie mir bitte helfen?", wrong:["Helfen Sie mir!","Sie helfen mir."], hint:"„würden“ + Infinitiv ist die höfliche Bitte-Form."}
+        ]
+      }
+    ],
+    schreiben: {
+      title: "Erasmus+ – Ihre Meinung",
+      situation: "Das Erasmus+-Programm ermöglicht Studierenden und Auszubildenden, einen Teil ihrer Ausbildung im Ausland zu absolvieren.",
+      punkte: [
+        "Sagen Sie, ob Sie das Programm attraktiv finden, und warum (nicht).",
+        "Nennen Sie mindestens einen Vorteil von Erasmus+.",
+        "Nennen Sie mindestens einen Nachteil von Erasmus+."
+      ],
+      minWords: 40,
+      maxWords: 100,
+      maxPunkte: 4
+    }
+  }
+  // weitere Kapitel nach demselben Muster ergänzen, sobald sie fertig sind.
+};
+
 const previewMode = new URLSearchParams(window.location.search).get("vorschau") === "1";
 if (previewMode) {
   document.addEventListener("DOMContentLoaded", function () {
@@ -2474,6 +2639,7 @@ let state = {
   artQueue:[], artIndex:0, artScore:0, artAttempts:0, artLocked:false,
   gapQueue:[], gapIndex:0, gapScore:0, gapAttempts:0, gapLocked:false,
   matchPairs:[], matchSelectedWord:null, matchSolved:0,
+  ktQueue:[], ktIndex:0, ktScore:0, ktAttempts:0, ktLocked:false, ktSchreibenPunkte:null, ktPartScores:{},
   resultReturnTo:"menu", resultRetryFn:null
 };
 
@@ -2608,6 +2774,10 @@ function showScreen(id){
   if(id !== "hoeren-task"){
     const hoerenAudioEl = document.getElementById("hoerenAudio");
     if(hoerenAudioEl && !hoerenAudioEl.paused){ hoerenAudioEl.pause(); }
+  }
+  if(id !== "kapiteltest"){
+    const ktAudioEl = document.getElementById("ktAudio");
+    if(ktAudioEl && !ktAudioEl.paused){ ktAudioEl.pause(); }
   }
   document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
   document.getElementById("screen-"+id).classList.add("active");
@@ -2779,26 +2949,31 @@ document.getElementById("btnSwitchChapter").addEventListener("click", ()=>{
 });
 
 /* ---------------- USAGE TRACKING (für die Lehrkraft) ----------------
-   Schickt beim Kapitelwechsel bzw. beim Verlassen der Seite einmalig Vorname +
-   genutzte Minuten an das zum aktuellen Kapitel gehörende Google-Formular
-   (weiterhin eines pro Kapitel, siehe FORM_CONFIG), damit die Antworten weiter
-   im passenden Tabellenblatt landen. Es werden keine weiteren Daten (Übersetzungen,
-   IP, etc.) gesendet. */
+   Schickt beim Kapitelwechsel bzw. beim Verlassen der Seite Vorname + genutzte
+   Minuten an das zum aktuellen Kapitel gehörende Google-Formular (weiterhin
+   eines pro Kapitel, siehe FORM_CONFIG), damit die Antworten weiter im
+   passenden Tabellenblatt landen. Es werden keine weiteren Daten
+   (Übersetzungen, IP, etc.) gesendet.
+   Wichtig: "visibilitychange" kann mehrfach pro Kapitelbesuch feuern (kurz in
+   eine andere App wechseln, Bildschirm sperren, ...), nicht nur beim
+   endgültigen Verlassen. Deshalb NICHT nach dem ersten Senden komplett
+   sperren (sonst geht die Zeit bis zum tatsächlichen Schließen verloren) -
+   stattdessen nach jedem Senden den Startzeitpunkt zurücksetzen, sodass eine
+   spätere Übertragung nur die seither neu vergangene Zeit meldet. Summiert
+   ergibt das wieder die korrekte Gesamtzeit, ohne Doppelzählung. */
 let usageSessionStart = null;
-let usageSent = false;
 let usageChapterAtStart = null;
 function startUsageTracking(){
   usageSessionStart = Date.now();
-  usageSent = false;
   usageChapterAtStart = state.chapter;
 }
 function sendUsageBeacon(){
-  if(usageSent || !usageSessionStart || !usageChapterAtStart) return;
+  if(!usageSessionStart || !usageChapterAtStart) return;
   const cfg = FORM_CONFIG[usageChapterAtStart];
   if(!cfg) return;
   const minutes = Math.round(((Date.now() - usageSessionStart) / 60000) * 10) / 10;
   if(minutes < 0.1) return;
-  usageSent = true;
+  usageSessionStart = Date.now();
   const params = new URLSearchParams();
   params.append(cfg.entryName, state.name || "Unbekannt");
   params.append(cfg.entryMinutes, String(minutes));
@@ -2853,6 +3028,28 @@ function sendLesenBeacon(track, score, total){
       fetch(cfg.url, {method:"POST", mode:"no-cors", body: params, keepalive:true});
     }
   }catch(e){ /* Übermittlung fehlgeschlagen - Übung läuft trotzdem normal weiter */ }
+}
+
+/* Sendet, sobald ein Kapiteltest komplett abgeschlossen ist (Ergebnis-
+   Bildschirm erreicht), einmalig Name und Gesamtergebnis ans Google-Formular
+   des jeweiligen Kapitels (nur wenn dafür entryTestErgebnis in FORM_CONFIG
+   hinterlegt ist - dieses Feld existiert noch nicht in den bestehenden
+   Formularen und muss von Thomas dort ergänzt werden, entry-ID danach hier
+   eintragen; bis dahin bricht die Funktion sauber ab und der Test läuft
+   trotzdem normal weiter). */
+function sendKapiteltestBeacon(score, total){
+  const cfg = FORM_CONFIG[state.chapter];
+  if(!cfg || !cfg.entryTestErgebnis) return;
+  const params = new URLSearchParams();
+  params.append(cfg.entryName, state.name || "Unbekannt");
+  params.append(cfg.entryTestErgebnis, score + " von " + total + " richtig");
+  try{
+    if(navigator.sendBeacon){
+      navigator.sendBeacon(cfg.url, params);
+    } else {
+      fetch(cfg.url, {method:"POST", mode:"no-cors", body: params, keepalive:true});
+    }
+  }catch(e){ /* Übermittlung fehlgeschlagen - Ergebnis wird trotzdem angezeigt */ }
 }
 
 /* ---------------- NEUIGKEITEN ----------------
@@ -3010,6 +3207,7 @@ document.querySelectorAll(".menu-item[data-go]").forEach(item=>{
     if(mode === "lerntagebuch"){ openLerntagebuch(); return; }
     if(mode === "neuigkeiten"){ openNews(); return; }
     if(mode === "wissen"){ openWissen(); return; }
+    if(mode === "kapiteltest"){ openKapiteltest(); return; }
     openSectionPicker(mode);
   });
 });
@@ -3033,6 +3231,15 @@ const SCHREIBEN_TASK_BY_CHAPTER = {
   // weitere Kapitel ergänzen, sobald passende Aufgaben in der
   // Schreibtraining-App (tasks.js) angelegt sind, z.B. 2: ["b1-dtz-00x"]
 };
+
+/* Derselbe Cloudflare Worker, der auch die Schreibtraining-App bewertet
+   (siehe deren config.js - WORKER_URL/APP_SECRET, Werte hier 1:1
+   übernommen), wird über einen eigenen Modus ("kapiteltest_schreiben")
+   direkt vom Kapiteltest aus aufgerufen (siehe submitKtSchreiben() weiter
+   unten). So bleibt das Ergebnis in einem Durchgang/einer Google-Sheet-
+   Zeile, statt zur separaten Schreibtraining-App weiterzuleiten. */
+const KAPITELTEST_WORKER_URL = "https://schreibtraining-bewertung.jurtzik.workers.dev";
+const KAPITELTEST_APP_SECRET = "Z3SKGkgo2qkvCbqQTg06D86RcKlrCB174vyn4BRgdbo";
 function openSchreibtraining(){
   const params = new URLSearchParams();
   if(state.name) params.set("name", state.name);
@@ -3636,6 +3843,231 @@ function nextLesenQuestion(){
 document.getElementById("btnLesenRetry").addEventListener("click", ()=>{
   startLesenTrack(state.lesenTrack);
 });
+
+/* ---------------- KAPITELTEST ----------------
+   Ein Durchgang durch alle Teile (Hören/Wortschatz/Lesen/Grammatik, dann
+   Schreiben), aufgebaut nach demselben Muster wie die Lesen-Übung oben
+   (Frage-für-Frage mit direktem Feedback), plus ein offener Schreiben-Teil
+   am Ende, der über den Schreibtraining-Worker KI-bewertet wird. Freigabe
+   pro Kapitel über TEST_RELEASED_CHAPTERS (siehe Kommentar dort), Inhalte
+   über KAPITELTEST_DATA. */
+function openKapiteltest(){
+  const chapterData = KAPITELTEST_DATA[state.chapter];
+  const unlocked = TEST_RELEASED_CHAPTERS.includes(state.chapter) && !!chapterData;
+  document.getElementById("ktLockedBlock").style.display = unlocked ? "none" : "block";
+  document.getElementById("ktIntroBlock").style.display = unlocked ? "block" : "none";
+  document.getElementById("ktRunningBlock").style.display = "none";
+  document.getElementById("ktSchreibenBlock").style.display = "none";
+  document.getElementById("ktResultBlock").style.display = "none";
+  document.getElementById("ktCounter").style.display = "none";
+  if(unlocked){
+    const mcCount = chapterData.parts.reduce((sum,p)=>sum+p.items.length, 0);
+    document.getElementById("ktIntroCountNum").textContent = mcCount + 1;
+  }
+  showScreen("kapiteltest");
+}
+function startKapiteltest(){
+  const chapterData = KAPITELTEST_DATA[state.chapter];
+  const flat = [];
+  const partScores = {};
+  chapterData.parts.forEach(part=>{
+    partScores[part.label] = {correct:0, total:part.items.length};
+    part.items.forEach((item, idx)=>{
+      flat.push(Object.assign({}, item, {
+        partLabel: part.label,
+        partInstruction: part.instruction,
+        partAudio: part.audio || null,
+        partReference: part.referenceHtml || null,
+        isFirstOfPart: idx === 0
+      }));
+    });
+  });
+  state.ktQueue = flat;
+  state.ktIndex = 0;
+  state.ktScore = 0;
+  state.ktSchreibenPunkte = null;
+  state.ktPartScores = partScores;
+  document.getElementById("ktIntroBlock").style.display = "none";
+  document.getElementById("ktRunningBlock").style.display = "block";
+  document.getElementById("ktCounter").style.display = "inline-block";
+  renderKtItem();
+}
+document.getElementById("btnKtStart").addEventListener("click", startKapiteltest);
+function renderKtItem(){
+  const item = state.ktQueue[state.ktIndex];
+  const total = state.ktQueue.length + 1; // +1 für den Schreiben-Teil am Ende
+  document.getElementById("ktCounter").textContent = (state.ktIndex+1) + " / " + total;
+  document.getElementById("ktProgress").style.width = Math.round((state.ktIndex/total)*100) + "%";
+  if(item.isFirstOfPart){
+    document.getElementById("ktPartLabel").textContent = item.partLabel;
+    document.getElementById("ktInstruction").textContent = item.partInstruction;
+    const audioEl = document.getElementById("ktAudio");
+    if(item.partAudio){
+      audioEl.src = item.partAudio;
+      audioEl.style.display = "block";
+      audioEl.load();
+    } else {
+      audioEl.pause();
+      audioEl.removeAttribute("src");
+      audioEl.style.display = "none";
+    }
+    const refEl = document.getElementById("ktReference");
+    if(item.partReference){
+      refEl.innerHTML = item.partReference;
+      refEl.style.display = "block";
+    } else {
+      refEl.innerHTML = "";
+      refEl.style.display = "none";
+    }
+  }
+  document.getElementById("ktSentence").textContent = item.q;
+  document.getElementById("ktFeedback").textContent = "";
+  document.getElementById("ktFeedback").className = "feedback";
+  state.ktAttempts = 0; state.ktLocked = false;
+  const options = shuffle([item.answer, ...item.wrong]);
+  const wrap = document.getElementById("ktOptions");
+  wrap.innerHTML = "";
+  options.forEach(opt=>{
+    const btn = document.createElement("button");
+    btn.className = "btn-secondary opt-full";
+    btn.textContent = opt;
+    btn.dataset.opt = opt;
+    btn.addEventListener("click", ()=> onKtOptionClick(btn, item));
+    wrap.appendChild(btn);
+  });
+}
+function onKtOptionClick(btn, item){
+  if(state.ktLocked || btn.disabled) return;
+  const fb = document.getElementById("ktFeedback");
+  if(btn.dataset.opt === item.answer){
+    state.ktScore++;
+    state.ktPartScores[item.partLabel].correct++;
+    state.ktLocked = true;
+    btn.classList.add("opt-correct");
+    document.querySelectorAll("#ktOptions button").forEach(b=>b.disabled=true);
+    fb.textContent = "Richtig! ✅";
+    fb.className = "feedback correct";
+    setTimeout(nextKtItem, 1200);
+  } else {
+    state.ktAttempts++;
+    btn.classList.add("opt-wrong");
+    btn.disabled = true;
+    fb.textContent = state.ktAttempts === 1
+      ? "Nicht ganz. 💡 Tipp: " + item.hint
+      : "Fast! Es bleibt nur noch eine Möglichkeit.";
+    fb.className = "feedback wrong";
+  }
+}
+function nextKtItem(){
+  if(state.ktIndex < state.ktQueue.length - 1){
+    state.ktIndex++;
+    renderKtItem();
+  } else {
+    document.getElementById("ktRunningBlock").style.display = "none";
+    startKtSchreiben();
+  }
+}
+function startKtSchreiben(){
+  const aufgabe = KAPITELTEST_DATA[state.chapter].schreiben;
+  const total = state.ktQueue.length + 1;
+  document.getElementById("ktCounter").textContent = total + " / " + total;
+  document.getElementById("ktProgress").style.width = "100%";
+  document.getElementById("ktSchreibenTitle").textContent = aufgabe.title;
+  document.getElementById("ktSchreibenSituation").textContent = aufgabe.situation;
+  const ul = document.getElementById("ktSchreibenPunkte");
+  ul.innerHTML = "";
+  aufgabe.punkte.forEach(p=>{
+    const li = document.createElement("li");
+    li.textContent = p;
+    ul.appendChild(li);
+  });
+  document.getElementById("ktSchreibenText").value = "";
+  document.getElementById("ktSchreibenWordcount").textContent = "0 Wörter (ca. " + aufgabe.minWords + "–" + aufgabe.maxWords + " empfohlen)";
+  document.getElementById("ktSchreibenLoading").style.display = "none";
+  document.getElementById("ktSchreibenFeedback").style.display = "none";
+  const submitBtn = document.getElementById("btnKtSchreibenSubmit");
+  submitBtn.disabled = false;
+  submitBtn.style.display = "";
+  document.getElementById("btnKtSchreibenWeiter").style.display = "none";
+  document.getElementById("ktSchreibenBlock").style.display = "block";
+}
+document.getElementById("ktSchreibenText").addEventListener("input", ()=>{
+  const words = document.getElementById("ktSchreibenText").value.trim().split(/\s+/).filter(Boolean);
+  const aufgabe = KAPITELTEST_DATA[state.chapter] && KAPITELTEST_DATA[state.chapter].schreiben;
+  const range = aufgabe ? " (ca. " + aufgabe.minWords + "–" + aufgabe.maxWords + " empfohlen)" : "";
+  document.getElementById("ktSchreibenWordcount").textContent = words.length + " Wörter" + range;
+});
+async function submitKtSchreiben(){
+  const aufgabe = KAPITELTEST_DATA[state.chapter].schreiben;
+  const text = document.getElementById("ktSchreibenText").value.trim();
+  const submitBtn = document.getElementById("btnKtSchreibenSubmit");
+  const loading = document.getElementById("ktSchreibenLoading");
+  const feedbackBlock = document.getElementById("ktSchreibenFeedback");
+  if(text.length < 10){
+    document.getElementById("ktSchreibenWordcount").textContent = "Bitte schreib noch etwas mehr Text, bevor du abschickst.";
+    return;
+  }
+  submitBtn.disabled = true;
+  loading.style.display = "block";
+  feedbackBlock.style.display = "none";
+  try{
+    const res = await fetch(KAPITELTEST_WORKER_URL, {
+      method: "POST",
+      headers: {"Content-Type":"application/json", "X-App-Secret": KAPITELTEST_APP_SECRET},
+      body: JSON.stringify({mode:"kapiteltest_schreiben", text: text, aufgabe: aufgabe})
+    });
+    const data = await res.json();
+    if(!res.ok || !data.feedback){ throw new Error((data && data.error) || "Unbekannter Fehler"); }
+    const punkte = Math.max(0, Math.min(aufgabe.maxPunkte, Math.round(Number(data.feedback.punkte) || 0)));
+    state.ktSchreibenPunkte = punkte;
+    document.getElementById("ktSchreibenPunkteText").textContent = "Punkte: " + punkte + " / " + aufgabe.maxPunkte;
+    document.getElementById("ktSchreibenKommentar").textContent = data.feedback.kommentar || "";
+    document.getElementById("ktSchreibenHinweisUmfang").textContent = data.feedback.hinweis_umfang || "";
+    document.getElementById("btnKtSchreibenWeiter").style.display = "";
+    submitBtn.style.display = "none";
+  }catch(e){
+    state.ktSchreibenPunkte = null;
+    document.getElementById("ktSchreibenPunkteText").textContent = "Bewertung gerade nicht möglich";
+    document.getElementById("ktSchreibenKommentar").textContent = "Die automatische Bewertung ist gerade nicht erreichbar. Du kannst es noch einmal versuchen oder ohne Bewertung fortfahren.";
+    document.getElementById("ktSchreibenHinweisUmfang").textContent = "";
+    submitBtn.disabled = false;
+    submitBtn.style.display = "";
+    document.getElementById("btnKtSchreibenWeiter").style.display = "";
+  } finally {
+    loading.style.display = "none";
+    feedbackBlock.style.display = "block";
+  }
+}
+document.getElementById("btnKtSchreibenSubmit").addEventListener("click", submitKtSchreiben);
+document.getElementById("btnKtSchreibenWeiter").addEventListener("click", finishKapiteltest);
+function finishKapiteltest(){
+  const aufgabe = KAPITELTEST_DATA[state.chapter].schreiben;
+  const schreibenPunkte = state.ktSchreibenPunkte || 0;
+  const score = state.ktScore + schreibenPunkte;
+  const total = state.ktQueue.length + aufgabe.maxPunkte;
+  document.getElementById("ktSchreibenBlock").style.display = "none";
+  document.getElementById("ktCounter").style.display = "none";
+  document.getElementById("ktResultScore").textContent = score;
+  document.getElementById("ktResultTotal").textContent = total;
+  const ratio = total > 0 ? score / total : 0;
+  document.getElementById("ktResultEmoji").textContent = ratio>=0.8 ? "🎉" : ratio>=0.5 ? "👍" : "💪";
+  document.getElementById("ktResultText").textContent = ratio>=0.8 ? "Stark gemacht!" : ratio>=0.5 ? "Guter Zwischenstand!" : "Dranbleiben lohnt sich – am besten die Bereiche mit wenig Punkten noch mal üben.";
+  const breakdown = document.getElementById("ktResultBreakdown");
+  breakdown.innerHTML = "";
+  Object.keys(state.ktPartScores).forEach(label=>{
+    const p = state.ktPartScores[label];
+    const line = document.createElement("p");
+    line.style.margin = "2px 0";
+    line.textContent = label + ": " + p.correct + " / " + p.total;
+    breakdown.appendChild(line);
+  });
+  const schreibenLine = document.createElement("p");
+  schreibenLine.style.margin = "2px 0";
+  schreibenLine.textContent = "Teil 6 · Schreiben: " + (state.ktSchreibenPunkte === null ? "nicht bewertet" : schreibenPunkte + " / " + aufgabe.maxPunkte);
+  breakdown.appendChild(schreibenLine);
+  document.getElementById("ktResultBlock").style.display = "block";
+  sendKapiteltestBeacon(score, total);
+}
 
 /* ---------------- MATCHING ---------------- */
 function startMatching(sec){
