@@ -3853,7 +3853,10 @@ document.getElementById("btnLesenRetry").addEventListener("click", ()=>{
    über KAPITELTEST_DATA. */
 function openKapiteltest(){
   const chapterData = KAPITELTEST_DATA[state.chapter];
-  const unlocked = TEST_RELEASED_CHAPTERS.includes(state.chapter) && !!chapterData;
+  // Wie bei der Kapitel-Sperre selbst: im Vorschau-Modus (?vorschau=1) ist der
+  // Kapiteltest auch vor der offiziellen Freischaltung (TEST_RELEASED_CHAPTERS)
+  // ansehbar - für TN ohne diesen Parameter bleibt er wie gewohnt gesperrt.
+  const unlocked = (TEST_RELEASED_CHAPTERS.includes(state.chapter) || previewMode) && !!chapterData;
   document.getElementById("ktLockedBlock").style.display = unlocked ? "none" : "block";
   document.getElementById("ktIntroBlock").style.display = unlocked ? "block" : "none";
   document.getElementById("ktRunningBlock").style.display = "none";
