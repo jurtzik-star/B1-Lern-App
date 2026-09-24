@@ -2992,13 +2992,20 @@ function startUsageTracking(){
 }
 function sendUsageBeacon(){
   if(!usageSessionStart || !usageChapterAtStart) return;
+  // Ohne Namen ist eine Zeit-Meldung nutzlos (verschmutzt nur die Übersicht als
+  // "Unbekannt") - dann lieber gar nicht senden, statt einen Platzhalter zu schicken.
+  if(!state.name) return;
   const cfg = FORM_CONFIG[usageChapterAtStart];
   if(!cfg) return;
-  const minutes = Math.round(((Date.now() - usageSessionStart) / 60000) * 10) / 10;
+  // Obergrenze pro Meldung: verhindert, dass ein über Nacht/lange im Hintergrund
+  // offen gelassener Tab (kein aktives Lernen, aber "visibilitychange"/"pagehide"
+  // feuert trotzdem) als extrem lange Lernzeit gezählt wird.
+  const USAGE_MAX_MINUTES = 90;
+  const minutes = Math.min(Math.round(((Date.now() - usageSessionStart) / 60000) * 10) / 10, USAGE_MAX_MINUTES);
   if(minutes < 0.1) return;
   usageSessionStart = Date.now();
   const params = new URLSearchParams();
-  params.append(cfg.entryName, state.name || "Unbekannt");
+  params.append(cfg.entryName, state.name);
   params.append(cfg.entryMinutes, String(minutes));
   try{
     if(navigator.sendBeacon){
@@ -3018,10 +3025,11 @@ window.addEventListener("pagehide", sendUsageBeacon);
    falls "Minuten" im Formular als Pflichtfeld markiert ist, muss das dort auf
    optional gestellt werden, sonst kommt diese Zeile nicht an. */
 function sendHoerenBeacon(track, score, total){
+  if(!state.name) return;
   const cfg = FORM_CONFIG[track.k];
   if(!cfg || !cfg.entryTrack || !cfg.entryResult) return;
   const params = new URLSearchParams();
-  params.append(cfg.entryName, state.name || "Unbekannt");
+  params.append(cfg.entryName, state.name);
   params.append(cfg.entryTrack, track.title);
   params.append(cfg.entryResult, score + " von " + total + " richtig");
   try{
@@ -3038,10 +3046,11 @@ function sendHoerenBeacon(track, score, total){
    Google-Formular des jeweiligen Kapitels (nur wenn dafür entryLeseuebung/
    entryLeseErgebnis in FORM_CONFIG hinterlegt sind - siehe TODO dort). */
 function sendLesenBeacon(track, score, total){
+  if(!state.name) return;
   const cfg = FORM_CONFIG[track.k];
   if(!cfg || !cfg.entryLeseuebung || !cfg.entryLeseErgebnis) return;
   const params = new URLSearchParams();
-  params.append(cfg.entryName, state.name || "Unbekannt");
+  params.append(cfg.entryName, state.name);
   params.append(cfg.entryLeseuebung, track.title);
   params.append(cfg.entryLeseErgebnis, score + " von " + total + " richtig");
   try{
@@ -3061,10 +3070,11 @@ function sendLesenBeacon(track, score, total){
    eintragen; bis dahin bricht die Funktion sauber ab und der Test läuft
    trotzdem normal weiter). */
 function sendKapiteltestBeacon(score, total){
+  if(!state.name) return;
   const cfg = FORM_CONFIG[state.chapter];
   if(!cfg || !cfg.entryTestErgebnis) return;
   const params = new URLSearchParams();
-  params.append(cfg.entryName, state.name || "Unbekannt");
+  params.append(cfg.entryName, state.name);
   params.append(cfg.entryTestErgebnis, score + " von " + total + " richtig");
   try{
     if(navigator.sendBeacon){
