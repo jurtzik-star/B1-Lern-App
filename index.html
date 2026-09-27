@@ -246,6 +246,7 @@
 }
 .chapter-card.preview { border-color: #ffb347; background: #fff8ec; }
 .chapter-card.preview .chapnum { background: #ffb347; color: #4a2e00; }
+.dictate-hint { background:#fff3cd; color:#664d03; border:1px solid #ffda6a; border-radius:8px; padding:8px 12px; font-size:0.85rem; margin:6px 0 10px; text-align:left; }
 </style>
 </head>
 <body>
@@ -364,6 +365,11 @@
         <h3>Karteikarten</h3>
         <p>Wörter ansehen, selbst übersetzen und lernen.</p>
         <p class="hint-text" id="scoreBadge-fc" style="text-align:left;display:none;margin:4px 0 0;"></p>
+      </div>
+      <div class="menu-item" data-go="redewendungen">
+        <span class="emoji">💬</span>
+        <h3>Redewendungen</h3>
+        <p>Kurze Situationen frei beantworten – per Sprache, mit direkter Rückmeldung.</p>
       </div>
       <div class="menu-item" data-go="article">
         <span class="emoji">🎯</span>
@@ -507,6 +513,50 @@
         </div>
       </div>
       <p class="hint-text">Richtig beim ersten Versuch: <span id="fcKnownCount">0</span> / <span id="fcTotalSeen">0</span></p>
+    </div>
+  </section>
+
+  <!-- REDEWENDUNGEN -->
+  <section id="screen-redewendungen" class="screen">
+    <div class="card">
+      <div class="topline">
+        <button class="btn-ghost" data-back="menu">← Menü</button>
+        <span class="pill" id="redCounter" style="display:none;">1 / 5</span>
+      </div>
+
+      <div id="redLockedBlock" style="display:none;">
+        <h2 style="margin-top:0;color:var(--green-900);font-size:1.05rem;">💬 Redewendungen</h2>
+        <p class="hint-text" style="text-align:left;">Für dieses Kapitel gibt es noch kein Redewendungen-Training – es wird nach und nach für weitere Kapitel ergänzt.</p>
+      </div>
+
+      <div id="redRunningBlock" style="display:none;">
+        <div class="progress-wrap"><div class="progress-bar" id="redProgress"></div></div>
+        <p class="hint-text" style="text-align:left;margin:10px 0 6px;font-weight:600;color:var(--green-900);" id="redSituation">—</p>
+        <div class="dictate-hint">🎤 Am besten laut sprechen und über die Diktierfunktion deines Handys eintippen lassen – so übst du direkt fürs freie Sprechen.</div>
+        <textarea id="redText" rows="3" style="width:100%;box-sizing:border-box;font-family:inherit;font-size:0.95rem;padding:10px;border-radius:8px;border:1px solid var(--green-100);" placeholder="Deine Antwort ..."></textarea>
+        <div class="row-btns" style="justify-content:center;margin-top:10px;">
+          <button class="btn-primary" id="btnRedSubmit">Abschicken &amp; Rückmeldung holen</button>
+        </div>
+        <p id="redLoading" style="display:none;text-align:center;" class="hint-text">Wird geprüft … 🤔</p>
+        <div id="redFeedback" style="display:none;margin-top:12px;">
+          <p class="feedback" id="redEinschaetzung"></p>
+          <p class="hint-text" style="text-align:left;"><strong>So klingt's gut:</strong> <span id="redKorrektur"></span></p>
+          <p class="hint-text" style="text-align:left;" id="redErklaerung"></p>
+          <div class="row-btns" style="justify-content:center;">
+            <button class="btn-primary" id="btnRedWeiter">Weiter →</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="redDoneBlock" style="display:none;">
+        <div class="score-box">
+          <div style="font-size:2rem;">🎉</div>
+          <p>Geschafft! Du hast alle Situationen dieses Kapitels geübt.</p>
+        </div>
+        <div class="row-btns" style="justify-content:center;">
+          <button class="btn-secondary" data-back="menu">Zurück zum Menü</button>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -2628,6 +2678,49 @@ const KAPITELTEST_DATA = {
   // weitere Kapitel nach demselben Muster ergänzen, sobald sie fertig sind.
 };
 
+/* ---------------- REDEWENDUNGEN-TRAINING ----------------
+   Pilot für Kapitel 1: kurze Alltagssituationen, in denen es vor allem auf
+   die richtige Höflichkeitsform/den passenden Gesprächseinstieg ankommt
+   (nicht auf Grammatik im Detail). Die Lernenden antworten frei (am besten
+   per Diktierfunktion des Handys), Bewertung + Korrektur + Erklärung kommen
+   über den bestehenden Cloudflare-Worker (schreibtraining-bewertung, Modus
+   "redewendung_feedback" - siehe worker.js). "beispiel" wird der KI als
+   Orientierung mitgegeben, aber den Lernenden nie vorher gezeigt. Inhalte
+   stammen aus dem echten Lehrwerk "Das Leben B1", Kapitel 1, S.12-15
+   (Übung 4 "Der Ton macht die Musik!" und Übung "Das Eis brechen"/
+   "Hallo, ich bin Hakim!"). Weitere Kapitel nach demselben Muster ergänzen,
+   sobald sie fertig sind. */
+const REDEWENDUNG_DATA = {
+  1: [
+    {
+      situation: "Du kommst ins Büro. Alle Kolleginnen und Kollegen sind gerade in ihre Arbeit vertieft. Du hast eine kurze Frage. Wie sprichst du sie höflich an?",
+      erwartungshinweis: "Höfliche Anrede/Entschuldigung plus Bitte um kurze Unterbrechung, am besten mit Konjunktiv II (z. B. \"Könnte ich ...\"). Ein zu direkter Einstieg ohne Anrede oder Bitte (z. B. \"Ich habe eine Frage.\") ist unhöflich.",
+      beispiel: "Entschuldigung, könnte ich euch kurz stören?"
+    },
+    {
+      situation: "Du bist unterwegs und möchtest eine fremde Person auf der Straße höflich nach der Uhrzeit fragen.",
+      erwartungshinweis: "Höfliche Frageform, am besten mit Konjunktiv II (\"Könnten Sie mir sagen ...\") statt der direkteren Form \"Können Sie mir sagen ...\".",
+      beispiel: "Entschuldigung, könnten Sie mir sagen, wie spät es ist?"
+    },
+    {
+      situation: "Du wohnst mit jemandem zusammen (WG oder Familie) und möchtest die Person bitten, den Müll runterzubringen – ohne dass es wie ein Befehl klingt.",
+      erwartungshinweis: "Höfliche Bitte statt Befehlsform, z. B. mit \"Könntest/Würdest du bitte ...\" oder \"Bringst du bitte mal ...?\". Unhöflich wäre z. B. \"Du müsstest mal den Müll runterbringen!\".",
+      beispiel: "Würdest du bitte mal den Müll runterbringen?"
+    },
+    {
+      situation: "Du bist auf einer Party und lernst gerade eine neue Person kennen. Du möchtest höflich ins Gespräch kommen (das Eis brechen). Was fragst du?",
+      erwartungshinweis: "Eine unverfängliche, freundliche Kontaktfrage, die zum lockeren Party-Kontext passt (z. B. nach der Party, dem Essen, ob man sich kennt). Zu persönliche oder unpassende Fragen (z. B. nach den Wohnkosten) passen hier nicht.",
+      beispiel: "Wie gefällt dir die Party?"
+    },
+    {
+      situation: "Auf derselben Party begrüßt dich jemand mit \"Schöne Wohnung!\". Du stimmst kurz zu und stellst gleich eine Anschlussfrage, um das Gespräch weiterzuführen.",
+      erwartungshinweis: "Kurze Zustimmung (z. B. \"Ja, finde ich auch.\"), gefolgt von einer freundlichen Anschlussfrage zum Kennenlernen (z. B. nach dem Wohnort).",
+      beispiel: "Ja, finde ich auch. Wohnst du in der Nähe?"
+    }
+  ]
+  // weitere Kapitel nach demselben Muster ergänzen, sobald sie fertig sind.
+};
+
 const previewMode = new URLSearchParams(window.location.search).get("vorschau") === "1";
 if (previewMode) {
   document.addEventListener("DOMContentLoaded", function () {
@@ -2663,6 +2756,7 @@ let state = {
   gapQueue:[], gapIndex:0, gapScore:0, gapAttempts:0, gapLocked:false,
   matchPairs:[], matchSelectedWord:null, matchSolved:0,
   ktQueue:[], ktIndex:0, ktScore:0, ktAttempts:0, ktLocked:false, ktSchreibenPunkte:null, ktPartScores:{},
+  redQueue:[], redIndex:0,
   resultReturnTo:"menu", resultRetryFn:null
 };
 
@@ -2766,6 +2860,7 @@ function shuffle(arr){
 const FOOTER_APP_NAME = "B1-Kurs";
 const EXERCISE_LABEL_BY_MODE = {
   flashcards: "Karteikarten",
+  redewendungen: "Redewendungen",
   article: "Artikel-Quiz",
   gap: "Lücken füllen",
   match: "Zuordnen",
@@ -3085,12 +3180,134 @@ function sendKapiteltestBeacon(score, total){
   }catch(e){ /* Übermittlung fehlgeschlagen - Ergebnis wird trotzdem angezeigt */ }
 }
 
+/* ---------------- REDEWENDUNGEN-TRAINING (Logik) ----------------
+   Ein Durchgang durch REDEWENDUNG_DATA[Kapitel]: Situation zeigen, freie
+   (am besten diktierte) Antwort einsammeln, sofort per KI-Rueckmeldung
+   (Worker-Modus "redewendung_feedback") bewerten - direkt nach jeder
+   einzelnen Situation, nicht erst am Ende (siehe Ruecksprache mit Thomas,
+   27.09.2026). Kapitel ohne Eintrag in REDEWENDUNG_DATA zeigen einen
+   freundlichen Sperr-Hinweis (redLockedBlock), genau wie beim Kapiteltest. */
+function openRedewendungen(){
+  const items = REDEWENDUNG_DATA[state.chapter];
+  const available = !!(items && items.length);
+  document.getElementById("redLockedBlock").style.display = available ? "none" : "block";
+  document.getElementById("redRunningBlock").style.display = "none";
+  document.getElementById("redDoneBlock").style.display = "none";
+  document.getElementById("redCounter").style.display = "none";
+  if(available){
+    startRedewendungen(items);
+  } else {
+    showScreen("redewendungen");
+  }
+}
+function startRedewendungen(items){
+  state.redQueue = items;
+  state.redIndex = 0;
+  document.getElementById("redCounter").style.display = "inline-block";
+  document.getElementById("redRunningBlock").style.display = "block";
+  renderRedItem();
+  showScreen("redewendungen");
+}
+function renderRedItem(){
+  const item = state.redQueue[state.redIndex];
+  document.getElementById("redCounter").textContent = (state.redIndex+1) + " / " + state.redQueue.length;
+  document.getElementById("redProgress").style.width = Math.round((state.redIndex/state.redQueue.length)*100) + "%";
+  document.getElementById("redSituation").textContent = item.situation;
+  document.getElementById("redText").value = "";
+  document.getElementById("redFeedback").style.display = "none";
+  document.getElementById("redLoading").style.display = "none";
+  const submitBtn = document.getElementById("btnRedSubmit");
+  submitBtn.disabled = false;
+  submitBtn.style.display = "";
+}
+async function submitRedewendung(){
+  const item = state.redQueue[state.redIndex];
+  const text = document.getElementById("redText").value.trim();
+  const submitBtn = document.getElementById("btnRedSubmit");
+  const loading = document.getElementById("redLoading");
+  const feedbackBlock = document.getElementById("redFeedback");
+  if(text.length < 2){
+    document.getElementById("redText").focus();
+    return;
+  }
+  submitBtn.disabled = true;
+  loading.style.display = "block";
+  feedbackBlock.style.display = "none";
+  try{
+    const res = await fetch(KAPITELTEST_WORKER_URL, {
+      method: "POST",
+      headers: {"Content-Type":"application/json", "X-App-Secret": KAPITELTEST_APP_SECRET},
+      body: JSON.stringify({mode:"redewendung_feedback", text: text, aufgabe: item})
+    });
+    const data = await res.json();
+    if(!res.ok || !data.feedback){ throw new Error((data && data.error) || "Unbekannter Fehler"); }
+    const einschaetzung = data.feedback.einschaetzung || "";
+    const einschEl = document.getElementById("redEinschaetzung");
+    einschEl.textContent = einschaetzung === "passt gut" ? "Passt gut! ✅" : (einschaetzung === "passt noch nicht" ? "Passt noch nicht 💡" : "Geht so, aber noch nicht ideal 💬");
+    einschEl.className = "feedback " + (einschaetzung === "passt gut" ? "correct" : "wrong");
+    document.getElementById("redKorrektur").textContent = data.feedback.korrektur || "";
+    document.getElementById("redErklaerung").textContent = data.feedback.erklaerung || "";
+    submitBtn.style.display = "none";
+  }catch(e){
+    const einschEl = document.getElementById("redEinschaetzung");
+    einschEl.textContent = "Rückmeldung gerade nicht möglich";
+    einschEl.className = "feedback wrong";
+    document.getElementById("redKorrektur").textContent = "Die automatische Rückmeldung ist gerade nicht erreichbar. Du kannst es noch einmal versuchen oder ohne Rückmeldung weitermachen.";
+    document.getElementById("redErklaerung").textContent = "";
+    submitBtn.disabled = false;
+    submitBtn.style.display = "";
+  } finally {
+    loading.style.display = "none";
+    feedbackBlock.style.display = "block";
+  }
+}
+function nextRedItem(){
+  if(state.redIndex < state.redQueue.length - 1){
+    state.redIndex++;
+    renderRedItem();
+  } else {
+    document.getElementById("redRunningBlock").style.display = "none";
+    document.getElementById("redCounter").style.display = "none";
+    document.getElementById("redDoneBlock").style.display = "block";
+    sendRedewendungenBeacon(state.redQueue.length);
+  }
+}
+document.getElementById("btnRedSubmit").addEventListener("click", submitRedewendung);
+document.getElementById("btnRedWeiter").addEventListener("click", nextRedItem);
+/* Sendet, sobald alle Situationen eines Durchgangs geuebt sind, einmalig
+   Name und Anzahl ans Google-Formular des jeweiligen Kapitels - nur wenn
+   dafuer entryRedewendungen in FORM_CONFIG hinterlegt ist (dieses Feld
+   existiert noch nicht in den bestehenden Formularen; kann Thomas bei
+   Bedarf dort ergaenzen, entry-ID danach hier eintragen - bis dahin bricht
+   die Funktion sauber ab und die Uebung laeuft trotzdem normal weiter). */
+function sendRedewendungenBeacon(total){
+  if(!state.name) return;
+  const cfg = FORM_CONFIG[state.chapter];
+  if(!cfg || !cfg.entryRedewendungen) return;
+  const params = new URLSearchParams();
+  params.append(cfg.entryName, state.name);
+  params.append(cfg.entryRedewendungen, total + " Situationen geübt");
+  try{
+    if(navigator.sendBeacon){
+      navigator.sendBeacon(cfg.url, params);
+    } else {
+      fetch(cfg.url, {method:"POST", mode:"no-cors", body: params, keepalive:true});
+    }
+  }catch(e){ /* Übermittlung fehlgeschlagen - Übung läuft trotzdem normal weiter */ }
+}
+
 /* ---------------- NEUIGKEITEN ----------------
    Kurze, chronologische Liste, in der neue Funktionen der App kurz erklärt
    werden. Neuer Eintrag = einfach oben in NEWS ergänzen (neuestes zuerst).
    Solange der neueste Eintrag noch nicht angesehen wurde, zeigt die Kachel
    ein "NEU"-Badge (Speicherung pro Gerät im localStorage, keine Übertragung). */
 const NEWS = [
+  {
+    id: "2026-09-redewendungen",
+    date: "September 2026",
+    title: "Neu: Redewendungen-Training",
+    text: "Über die Kachel „💬 Redewendungen“ direkt nach den Karteikarten kannst du kurze Alltagssituationen üben, zum Beispiel wie du dich höflich in ein Gespräch einbringst. Sprich deine Antwort am besten über die Diktierfunktion deines Handys ein und bekommst sofort eine Rückmeldung mit Korrektur und kurzer Erklärung."
+  },
   {
     id: "2026-09-hausaufgaben",
     date: "September 2026",
@@ -3283,6 +3500,7 @@ document.querySelectorAll(".menu-item[data-go]").forEach(item=>{
     if(mode === "neuigkeiten"){ openNews(); return; }
     if(mode === "wissen"){ openWissen(); return; }
     if(mode === "kapiteltest"){ openKapiteltest(); return; }
+    if(mode === "redewendungen"){ currentExerciseMode = "redewendungen"; openRedewendungen(); return; }
     openSectionPicker(mode);
   });
 });
