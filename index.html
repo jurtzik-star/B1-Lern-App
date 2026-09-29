@@ -429,6 +429,11 @@
         <h3>Kapiteltest</h3>
         <p>Teste am Ende des Kapitels dein Können in Hören, Wortschatz, Lesen, Grammatik und Schreiben – mit direkter Rückmeldung.</p>
       </div>
+      <div class="menu-item" data-go="zwischentest" id="zwischentestMenuItem" style="grid-column:1/-1;display:none;">
+        <span class="emoji">🧭</span>
+        <h3>Zwischentest (Kapitel 1–6)</h3>
+        <p>Wiederhole die wichtigsten Themen aus allen bisherigen Kapiteln – mit direkter Rückmeldung.</p>
+      </div>
     </div>
   </section>
 
@@ -747,12 +752,12 @@
       </div>
 
       <div id="ktLockedBlock" style="display:none;">
-        <h2 style="margin-top:0;color:var(--green-900);font-size:1.05rem;">📝 Kapiteltest</h2>
-        <p class="hint-text" style="text-align:left;">Der Kapiteltest für dieses Kapitel ist noch nicht freigeschaltet. Er wird am letzten Unterrichtstag des Kapitels geöffnet – frag gern deine Kursleitung.</p>
+        <h2 style="margin-top:0;color:var(--green-900);font-size:1.05rem;" id="ktLockedTitle">📝 Kapiteltest</h2>
+        <p class="hint-text" style="text-align:left;" id="ktLockedText">Der Kapiteltest für dieses Kapitel ist noch nicht freigeschaltet. Er wird am letzten Unterrichtstag des Kapitels geöffnet – frag gern deine Kursleitung.</p>
       </div>
 
       <div id="ktIntroBlock" style="display:none;">
-        <h2 style="margin-top:0;color:var(--green-900);font-size:1.05rem;">📝 Kapiteltest</h2>
+        <h2 style="margin-top:0;color:var(--green-900);font-size:1.05rem;" id="ktIntroTitle">📝 Kapiteltest</h2>
         <p class="hint-text" style="text-align:left;" id="ktIntroCount">Dieser Test prüft Hören, Wortschatz, Lesen, Grammatik und Schreiben – <span id="ktIntroCountNum">20</span> Aufgaben insgesamt. Du bekommst nach jeder Antwort direkte Rückmeldung, am Ende ein Gesamtergebnis. Nimm dir etwas Zeit am Stück.</p>
         <div class="row-btns" style="justify-content:center;">
           <button class="btn-primary" id="btnKtStart">Test starten ▶️</button>
@@ -2547,7 +2552,7 @@ const FORM_CONFIG = {
   3: {url:"https://docs.google.com/forms/d/e/1FAIpQLSe6c0v7E2kO6S2pnTTJanR2e-CATpg_VmHBWLa7M-tiHrH2mw/formResponse", entryName:"entry.1349131443", entryMinutes:"entry.497255741", entryTrack:"entry.732802645", entryResult:"entry.1397230054", entryLeseuebung:"entry.953879750", entryLeseErgebnis:"entry.428923870", entryTestErgebnis:"entry.431168305", entryRedewendungen:"entry.742477437"},
   4: {url:"https://docs.google.com/forms/d/e/1FAIpQLSeZkyLf4l6x8zOGndk3FIcMCDH9ni-9w4S5YogTn08hsPnaqg/formResponse", entryName:"entry.1349131443", entryMinutes:"entry.497255741", entryTrack:"entry.732802645", entryResult:"entry.1397230054", entryLeseuebung:"entry.1590662338", entryLeseErgebnis:"entry.1831681849", entryTestErgebnis:"entry.1124141849", entryRedewendungen:"entry.372753175"},
   5: {url:"https://docs.google.com/forms/d/e/1FAIpQLScoHOfEhCqAx2r-x7OIY5LLmlVpn5GUp8x-qRszdUygdTfWIQ/formResponse", entryName:"entry.1349131443", entryMinutes:"entry.497255741", entryTrack:"entry.732802645", entryResult:"entry.1397230054", entryLeseuebung:"entry.318900136", entryLeseErgebnis:"entry.1902329642", entryTestErgebnis:"entry.1364264274", entryRedewendungen:"entry.1047254786"},
-  6: {url:"https://docs.google.com/forms/d/e/1FAIpQLSfOWK-jriiZMYSacd2CRz0FSMDc0EKemeYTPwFpQc0Xkc-eoA/formResponse", entryName:"entry.1349131443", entryMinutes:"entry.497255741", entryTrack:"entry.732802645", entryResult:"entry.1397230054", entryLeseuebung:"entry.1898187553", entryLeseErgebnis:"entry.438118217", entryTestErgebnis:"entry.165371200", entryRedewendungen:"entry.678946831"}
+  6: {url:"https://docs.google.com/forms/d/e/1FAIpQLSfOWK-jriiZMYSacd2CRz0FSMDc0EKemeYTPwFpQc0Xkc-eoA/formResponse", entryName:"entry.1349131443", entryMinutes:"entry.497255741", entryTrack:"entry.732802645", entryResult:"entry.1397230054", entryLeseuebung:"entry.1898187553", entryLeseErgebnis:"entry.438118217", entryTestErgebnis:"entry.165371200", entryRedewendungen:"entry.678946831", entryZwischentestErgebnis:"entry.838099654"}
 };
 /* Zuordnung der Sprachauswahl (Startbildschirm) zu ISO-639-1-Codes für die
    automatische Übersetzungsprüfung. Sprachen ohne Eintrag (z. B. "Andere")
@@ -2597,6 +2602,11 @@ const RELEASED_CHAPTERS = [1, 2, 3, 4, 5, 6];
    Kapitel im Unterricht fertig behandelt wurde. Bis dahin zeigt die
    Kapiteltest-Kachel im Menü den Hinweis "noch nicht freigeschaltet". */
 const TEST_RELEASED_CHAPTERS = [];
+
+/* Zwischentest (Kapitel 1-6): eigene Freischaltung, unabhängig von
+   TEST_RELEASED_CHAPTERS - erscheint als zusätzliche Kachel, aber nur in
+   Kapitel 6. Freischaltung durch Thomas, sobald der Test fertig ist. */
+let ZWISCHENTEST_RELEASED = false;
 
 /* KAPITELTEST_DATA: pro Kapitel ein Eintrag mit "parts" (Hören/Wortschatz/
    Lesen/Grammatik - Mehrfachauswahl-Aufgaben im selben {q,answer,wrong,hint}-
@@ -2674,8 +2684,135 @@ const KAPITELTEST_DATA = {
       maxWords: 100,
       maxPunkte: 4
     }
+  },
+  2: {
+    parts: [
+      {
+        label: "Teil 1 · Hören",
+        instruction: "Hör dir das Gespräch an. Richtig oder falsch?",
+        audio: "audio/kapiteltest-k2/kapitel2_hoeren.mp3",
+        items: [
+          {q:"Melissa und Fabian planen, zusammen zum Amateurtheaterfestival „Bühne frei“ zu gehen.", answer:"Richtig", wrong:["Falsch"], hint:"Melissa erzählt am Anfang, wann das Festival ist."},
+          {q:"Am Freitagabend gibt es beim Festival schon die ersten Aufführungen.", answer:"Falsch", wrong:["Richtig"], hint:"Melissa beschreibt den Ablauf: Freitag ist nur die Eröffnung, die Aufführungen sind erst am Wochenende."},
+          {q:"Insgesamt spielen sechs Theatergruppen beim Festival.", answer:"Richtig", wrong:["Falsch"], hint:"Melissa nennt die Anzahl der Theatergruppen."},
+          {q:"Fabian hat am Samstagvormittag Zeit für das Festival.", answer:"Falsch", wrong:["Richtig"], hint:"Fabian erklärt, warum er erst am Nachmittag Zeit hat."},
+          {q:"Die Karten für das Festival kosten acht Euro.", answer:"Richtig", wrong:["Falsch"], hint:"Melissa nennt den Preis der Karten."},
+          {q:"Melissa und Fabian treffen sich erst direkt vor der Vorstellung um 19 Uhr.", answer:"Falsch", wrong:["Richtig"], hint:"Am Ende verabreden sie sich schon vorher im Café."}
+        ]
+      }
+    ]
+  },
+  3: {
+    parts: [
+      {
+        label: "Teil 1 · Hören",
+        instruction: "Hör dir das Interview an. Richtig oder falsch?",
+        audio: "audio/kapiteltest-k3/kapitel3_hoeren.mp3",
+        items: [
+          {q:"Sabine Reuter organisiert die Vorlesepatenschaften erst seit einem Jahr.", answer:"Falsch", wrong:["Richtig"], hint:"Der Moderator stellt Sabine Reuter zu Beginn vor."},
+          {q:"Die Vorlesepatinnen und -paten gehen einmal pro Woche in Schulen oder in die Bücherei.", answer:"Richtig", wrong:["Falsch"], hint:"Sabine beschreibt, wie oft sie aktiv sind."},
+          {q:"Jonas Berg geht jeden Tag mit den Hunden im Tierheim spazieren.", answer:"Falsch", wrong:["Richtig"], hint:"Jonas erzählt, wie oft er mit den Hunden spazieren geht."},
+          {q:"Jonas investiert ungefähr fünf bis sechs Stunden pro Woche im Tierheim.", answer:"Richtig", wrong:["Falsch"], hint:"Jonas nennt seine wöchentliche Stundenzahl."},
+          {q:"Sabine und Jonas raten, sich sofort langfristig zu verpflichten.", answer:"Falsch", wrong:["Richtig"], hint:"Am Ende geben beide einen Rat für Interessierte."}
+        ]
+      }
+    ]
+  },
+  4: {
+    parts: [
+      {
+        label: "Teil 1 · Hören",
+        instruction: "Hör dir das Interview an. Richtig oder falsch?",
+        audio: "audio/kapiteltest-k4/kapitel4_hoeren.mp3",
+        items: [
+          {q:"Thomas Vogel arbeitet seit zwölf Jahren als Ranger im Nationalpark.", answer:"Richtig", wrong:["Falsch"], hint:"Die Moderatorin stellt Thomas Vogel zu Beginn vor."},
+          {q:"Der Nationalpark wurde schon vor über fünfzig Jahren gegründet.", answer:"Falsch", wrong:["Richtig"], hint:"Thomas Vogel nennt das Gründungsjahr des Parks."},
+          {q:"Im Park gibt es mehr als hundert Kilometer Wanderwege.", answer:"Richtig", wrong:["Falsch"], hint:"Thomas Vogel nennt die Länge der Wanderwege."},
+          {q:"Die Wildkatze ist aus der Region komplett verschwunden.", answer:"Falsch", wrong:["Richtig"], hint:"Thomas Vogel erzählt, wie sich die Wildkatze entwickelt hat."},
+          {q:"Ab dem Frühjahr bietet der Park geführte Nachtwanderungen an.", answer:"Richtig", wrong:["Falsch"], hint:"Thomas Vogel kündigt ein neues Angebot an."},
+          {q:"Der Park hat aktuell weniger als 50.000 Besucherinnen und Besucher pro Jahr.", answer:"Falsch", wrong:["Richtig"], hint:"Thomas Vogel nennt die ungefähre Besucherzahl."}
+        ]
+      }
+    ]
+  },
+  5: {
+    parts: [
+      {
+        label: "Teil 1 · Hören",
+        instruction: "Hör dir das Gespräch an. Richtig oder falsch?",
+        audio: "audio/kapiteltest-k5/kapitel5_hoeren.mp3",
+        items: [
+          {q:"Ingrid ist 1978 nach Toronto ausgewandert.", answer:"Richtig", wrong:["Falsch"], hint:"Ingrid nennt das Jahr und die Stadt gleich zu Beginn."},
+          {q:"Der Opa hatte in Deutschland schon eine feste Stelle als Ingenieur.", answer:"Falsch", wrong:["Richtig"], hint:"Ingrid erklärt, warum sie ausgewandert sind."},
+          {q:"In der ersten Zeit haben Ingrid und ihr Mann bei Bekannten gewohnt.", answer:"Richtig", wrong:["Falsch"], hint:"Ingrid erzählt, wo sie zuerst gewohnt haben."},
+          {q:"Ingrid hat in Kanada einen Deutschkurs für Kanadier gegeben.", answer:"Richtig", wrong:["Falsch"], hint:"Ingrid erzählt, womit sie sich beschäftigt hat."},
+          {q:"Telefonieren nach Deutschland war damals billig und unkompliziert.", answer:"Falsch", wrong:["Richtig"], hint:"Ingrid erzählt, warum Telefonieren schwierig war."},
+          {q:"Ingrid und ihr Mann sind für immer in Kanada geblieben.", answer:"Falsch", wrong:["Richtig"], hint:"Ingrid erzählt am Ende, wie lange sie geblieben sind."}
+        ]
+      }
+    ]
+  },
+  6: {
+    parts: [
+      {
+        label: "Teil 1 · Hören (Marktbericht)",
+        instruction: "Hör dir den Bericht an. Richtig oder falsch?",
+        audio: "audio/kapiteltest-k6/kapitel6_hoeren_teil1.mp3",
+        items: [
+          {q:"Auf dem Weihnachtsmarkt in Lindenau stehen über 80 Hütten.", answer:"Richtig", wrong:["Falsch"], hint:"Julia Krämer nennt die Anzahl der Hütten."},
+          {q:"Die neue Eisbahn ist nur bis 20 Uhr geöffnet.", answer:"Falsch", wrong:["Richtig"], hint:"Julia Krämer nennt die Öffnungszeit der Eisbahn."},
+          {q:"Der Weihnachtsbaum wird um 19 Uhr feierlich beleuchtet.", answer:"Richtig", wrong:["Falsch"], hint:"Julia Krämer nennt die Uhrzeit der Baumbeleuchtung."},
+          {q:"Die Veranstalter erwarten an diesem Wochenende etwa 25.000 Besucherinnen und Besucher.", answer:"Richtig", wrong:["Falsch"], hint:"Julia Krämer nennt die erwartete Besucherzahl."},
+          {q:"Der Weihnachtsbaum ist nur etwa fünf Meter hoch.", answer:"Falsch", wrong:["Richtig"], hint:"Julia Krämer beschreibt die Höhe des Weihnachtsbaums."}
+        ]
+      },
+      {
+        label: "Teil 2 · Hören (Sprachnachrichten)",
+        instruction: "Hör dir die beiden Sprachnachrichten an. Richtig oder falsch?",
+        audio: "audio/kapiteltest-k6/kapitel6_hoeren_teil2.mp3",
+        items: [
+          {q:"Anna braucht noch Kerzen und Marzipan.", answer:"Richtig", wrong:["Falsch"], hint:"Anna zählt auf, was ihr noch fehlt."},
+          {q:"Anna und Pia wollen sich am Samstag zum Weihnachtsmarkt treffen.", answer:"Falsch", wrong:["Richtig"], hint:"Anna schlägt einen Tag für den Besuch vor."},
+          {q:"Onkel Peter feiert Heiligabend dieses Jahr bei Max.", answer:"Falsch", wrong:["Richtig"], hint:"Peter sagt, wo dieses Jahr gefeiert wird."},
+          {q:"Max soll den Glühwein mitbringen.", answer:"Richtig", wrong:["Falsch"], hint:"Peter bittet Max um etwas Bestimmtes."},
+          {q:"Das Treffen bei Onkel Peter ist um 16 Uhr geplant.", answer:"Richtig", wrong:["Falsch"], hint:"Peter nennt die Uhrzeit des Treffens."}
+        ]
+      }
+    ]
   }
   // weitere Kapitel nach demselben Muster ergänzen, sobald sie fertig sind.
+};
+
+/* ZWISCHENTEST_DATA: Wiederholungstest nach Kapitel 6, deckt Themen aus
+   Kapitel 1-6 ab. Gleiche Struktur wie ein Eintrag in KAPITELTEST_DATA
+   ("parts" + optional "schreiben"), aber nicht pro Kapitel, sondern ein
+   einzelnes Objekt - Freischaltung über ZWISCHENTEST_RELEASED statt
+   TEST_RELEASED_CHAPTERS. Ergebnis wird über FORM_CONFIG[6]
+   (entryZwischentestErgebnis) gemeldet. Alle Texte sind eigene, neue
+   Formulierungen - keine Übernahme aus dem Testheft des Verlags. */
+const ZWISCHENTEST_DATA = {
+  parts: [
+    {
+      label: "Teil 1 · Hören (Sprachnachricht 1)",
+      instruction: "Hör dir die Sprachnachricht an. Richtig oder falsch?",
+      audio: "audio/zwischentest/zwischentest_hoeren.mp3",
+      items: [
+        {q:"Die geführte Wanderung im Naturpark beginnt schon um sieben Uhr.", answer:"Falsch", wrong:["Richtig"], hint:"Meike nennt die Startzeit der Wanderung."},
+        {q:"Meike möchte, dass Basti feste Schuhe mitbringt.", answer:"Richtig", wrong:["Falsch"], hint:"Meike bittet Basti, etwas Bestimmtes mitzubringen."}
+      ]
+    },
+    {
+      label: "Teil 2 · Hören (Sprachnachricht 2)",
+      instruction: "Hör dir die zweite Sprachnachricht an. Richtig oder falsch?",
+      items: [
+        {q:"Carla studiert im Rahmen eines Erasmus-Programms in Bologna.", answer:"Richtig", wrong:["Falsch"], hint:"Jan erwähnt, wo Carla gerade ist."},
+        {q:"Carla spielt bei einer kleinen Theatergruppe mit.", answer:"Richtig", wrong:["Falsch"], hint:"Jan erzählt, wobei Carla mittlerweile mitmacht."},
+        {q:"Jan hat kein Interesse daran, zur Premiere zu kommen.", answer:"Falsch", wrong:["Richtig"], hint:"Jan sagt am Ende, ob er kommen möchte."}
+      ]
+    }
+  ]
+  // Wortschatz/Lesen/Grammatik/Schreiben aus Kapitel 1-6 nach demselben
+  // Muster ergänzen, sobald sie fertig sind.
 };
 
 /* ---------------- REDEWENDUNGEN-TRAINING ----------------
@@ -3191,6 +3328,7 @@ function selectChapter(k){
   const meta = CHAPTER_META[k] || {title:"", themes:""};
   document.getElementById("menuChapterHint").textContent = "Kapitel " + k + " · " + meta.title + ": " + meta.themes;
   document.getElementById("wordlistTitle").textContent = "Meine Wortliste – Kapitel " + k;
+  document.getElementById("zwischentestMenuItem").style.display = (k === 6) ? "" : "none";
   renderScoreBadges();
   updateNewsBadge();
   showScreen("menu");
@@ -3306,6 +3444,26 @@ function sendKapiteltestBeacon(score, total){
   const params = new URLSearchParams();
   params.append(cfg.entryName, state.name);
   params.append(cfg.entryTestErgebnis, score + " von " + total + " richtig");
+  try{
+    if(navigator.sendBeacon){
+      navigator.sendBeacon(cfg.url, params);
+    } else {
+      fetch(cfg.url, {method:"POST", mode:"no-cors", body: params, keepalive:true});
+    }
+  }catch(e){ /* Übermittlung fehlgeschlagen - Ergebnis wird trotzdem angezeigt */ }
+}
+/* Der Zwischentest ist kapitelübergreifend, meldet sein Ergebnis aber immer
+   über das Formular/Sheet von Kapitel 6 (dort ist das entsprechende Feld
+   angelegt - siehe FORM_CONFIG[6].entryZwischentestErgebnis), unabhängig
+   davon, in welchem Kapitel die/der Lernende sich die Kachel angesehen hat
+   (die Kachel erscheint ohnehin nur in Kapitel 6). */
+function sendZwischentestBeacon(score, total){
+  if(!state.name) return;
+  const cfg = FORM_CONFIG[6];
+  if(!cfg || !cfg.entryZwischentestErgebnis) return;
+  const params = new URLSearchParams();
+  params.append(cfg.entryName, state.name);
+  params.append(cfg.entryZwischentestErgebnis, score + " von " + total + " richtig");
   try{
     if(navigator.sendBeacon){
       navigator.sendBeacon(cfg.url, params);
@@ -3635,6 +3793,7 @@ document.querySelectorAll(".menu-item[data-go]").forEach(item=>{
     if(mode === "neuigkeiten"){ openNews(); return; }
     if(mode === "wissen"){ openWissen(); return; }
     if(mode === "kapiteltest"){ openKapiteltest(); return; }
+    if(mode === "zwischentest"){ openKapiteltest("zwischentest"); return; }
     if(mode === "redewendungen"){ currentExerciseMode = "redewendungen"; openRedewendungen(); return; }
     openSectionPicker(mode);
   });
@@ -4279,12 +4438,29 @@ document.getElementById("btnLesenRetry").addEventListener("click", ()=>{
    am Ende, der über den Schreibtraining-Worker KI-bewertet wird. Freigabe
    pro Kapitel über TEST_RELEASED_CHAPTERS (siehe Kommentar dort), Inhalte
    über KAPITELTEST_DATA. */
-function openKapiteltest(){
-  const chapterData = KAPITELTEST_DATA[state.chapter];
+/* getKtData(): liefert die Aufgaben-Daten für den gerade laufenden Test -
+   entweder den normalen Kapiteltest des aktuellen Kapitels (KAPITELTEST_DATA)
+   oder, wenn state.ktMode auf "zwischentest" steht, den kapitelübergreifenden
+   ZWISCHENTEST_DATA. So kann die komplette Kapiteltest-Logik unten für beide
+   Testarten wiederverwendet werden. */
+function getKtData(){
+  return state.ktMode === "zwischentest" ? ZWISCHENTEST_DATA : KAPITELTEST_DATA[state.chapter];
+}
+function openKapiteltest(mode){
+  state.ktMode = mode === "zwischentest" ? "zwischentest" : "chapter";
+  const chapterData = getKtData();
+  const isZwischentest = state.ktMode === "zwischentest";
   // Wie bei der Kapitel-Sperre selbst: im Vorschau-Modus (?vorschau=1) ist der
-  // Kapiteltest auch vor der offiziellen Freischaltung (TEST_RELEASED_CHAPTERS)
-  // ansehbar - für TN ohne diesen Parameter bleibt er wie gewohnt gesperrt.
-  const unlocked = (TEST_RELEASED_CHAPTERS.includes(state.chapter) || previewMode) && !!chapterData;
+  // Test auch vor der offiziellen Freischaltung (TEST_RELEASED_CHAPTERS bzw.
+  // ZWISCHENTEST_RELEASED) ansehbar - für TN ohne diesen Parameter bleibt er
+  // wie gewohnt gesperrt.
+  const released = isZwischentest ? ZWISCHENTEST_RELEASED : TEST_RELEASED_CHAPTERS.includes(state.chapter);
+  const unlocked = (released || previewMode) && !!chapterData;
+  document.getElementById("ktLockedTitle").textContent = isZwischentest ? "🧭 Zwischentest (Kapitel 1–6)" : "📝 Kapiteltest";
+  document.getElementById("ktLockedText").textContent = isZwischentest
+    ? "Der Zwischentest ist noch nicht freigeschaltet. Frag gern deine Kursleitung, wann er geöffnet wird."
+    : "Der Kapiteltest für dieses Kapitel ist noch nicht freigeschaltet. Er wird am letzten Unterrichtstag des Kapitels geöffnet – frag gern deine Kursleitung.";
+  document.getElementById("ktIntroTitle").textContent = isZwischentest ? "🧭 Zwischentest (Kapitel 1–6)" : "📝 Kapiteltest";
   document.getElementById("ktLockedBlock").style.display = unlocked ? "none" : "block";
   document.getElementById("ktIntroBlock").style.display = unlocked ? "block" : "none";
   document.getElementById("ktRunningBlock").style.display = "none";
@@ -4293,12 +4469,12 @@ function openKapiteltest(){
   document.getElementById("ktCounter").style.display = "none";
   if(unlocked){
     const mcCount = chapterData.parts.reduce((sum,p)=>sum+p.items.length, 0);
-    document.getElementById("ktIntroCountNum").textContent = mcCount + 1;
+    document.getElementById("ktIntroCountNum").textContent = mcCount + (chapterData.schreiben ? 1 : 0);
   }
   showScreen("kapiteltest");
 }
 function startKapiteltest(){
-  const chapterData = KAPITELTEST_DATA[state.chapter];
+  const chapterData = getKtData();
   const flat = [];
   const partScores = {};
   chapterData.parts.forEach(part=>{
@@ -4399,7 +4575,13 @@ function nextKtItem(){
   }
 }
 function startKtSchreiben(){
-  const aufgabe = KAPITELTEST_DATA[state.chapter].schreiben;
+  const aufgabe = (getKtData() || {}).schreiben;
+  if(!aufgabe){
+    // Für dieses Kapitel gibt es noch keine Schreiben-Aufgabe (Kapiteltest
+    // ist noch nicht komplett) - direkt zum Ergebnis springen.
+    finishKapiteltest();
+    return;
+  }
   const total = state.ktQueue.length + 1;
   document.getElementById("ktCounter").textContent = total + " / " + total;
   document.getElementById("ktProgress").style.width = "100%";
@@ -4424,12 +4606,12 @@ function startKtSchreiben(){
 }
 document.getElementById("ktSchreibenText").addEventListener("input", ()=>{
   const words = document.getElementById("ktSchreibenText").value.trim().split(/\s+/).filter(Boolean);
-  const aufgabe = KAPITELTEST_DATA[state.chapter] && KAPITELTEST_DATA[state.chapter].schreiben;
+  const aufgabe = getKtData() && getKtData().schreiben;
   const range = aufgabe ? " (ca. " + aufgabe.minWords + "–" + aufgabe.maxWords + " empfohlen)" : "";
   document.getElementById("ktSchreibenWordcount").textContent = words.length + " Wörter" + range;
 });
 async function submitKtSchreiben(){
-  const aufgabe = KAPITELTEST_DATA[state.chapter].schreiben;
+  const aufgabe = getKtData().schreiben;
   const text = document.getElementById("ktSchreibenText").value.trim();
   const submitBtn = document.getElementById("btnKtSchreibenSubmit");
   const loading = document.getElementById("ktSchreibenLoading");
@@ -4472,10 +4654,10 @@ async function submitKtSchreiben(){
 document.getElementById("btnKtSchreibenSubmit").addEventListener("click", submitKtSchreiben);
 document.getElementById("btnKtSchreibenWeiter").addEventListener("click", finishKapiteltest);
 function finishKapiteltest(){
-  const aufgabe = KAPITELTEST_DATA[state.chapter].schreiben;
+  const aufgabe = getKtData() && getKtData().schreiben;
   const schreibenPunkte = state.ktSchreibenPunkte || 0;
   const score = state.ktScore + schreibenPunkte;
-  const total = state.ktQueue.length + aufgabe.maxPunkte;
+  const total = state.ktQueue.length + (aufgabe ? aufgabe.maxPunkte : 0);
   document.getElementById("ktSchreibenBlock").style.display = "none";
   document.getElementById("ktCounter").style.display = "none";
   document.getElementById("ktResultScore").textContent = score;
@@ -4492,12 +4674,18 @@ function finishKapiteltest(){
     line.textContent = label + ": " + p.correct + " / " + p.total;
     breakdown.appendChild(line);
   });
-  const schreibenLine = document.createElement("p");
-  schreibenLine.style.margin = "2px 0";
-  schreibenLine.textContent = "Teil 6 · Schreiben: " + (state.ktSchreibenPunkte === null ? "nicht bewertet" : schreibenPunkte + " / " + aufgabe.maxPunkte);
-  breakdown.appendChild(schreibenLine);
+  if(aufgabe){
+    const schreibenLine = document.createElement("p");
+    schreibenLine.style.margin = "2px 0";
+    schreibenLine.textContent = "Schreiben: " + (state.ktSchreibenPunkte === null ? "nicht bewertet" : schreibenPunkte + " / " + aufgabe.maxPunkte);
+    breakdown.appendChild(schreibenLine);
+  }
   document.getElementById("ktResultBlock").style.display = "block";
-  sendKapiteltestBeacon(score, total);
+  if(state.ktMode === "zwischentest"){
+    sendZwischentestBeacon(score, total);
+  } else {
+    sendKapiteltestBeacon(score, total);
+  }
 }
 
 /* ---------------- MATCHING ---------------- */
