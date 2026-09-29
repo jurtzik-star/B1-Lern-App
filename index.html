@@ -2543,11 +2543,11 @@ const SECTION_LABELS_BY_CHAPTER = {
    eingetragen) - Lesen-Tracking läuft damit für Kapitel 1-6 vollständig. */
 const FORM_CONFIG = {
   1: {url:"https://docs.google.com/forms/d/e/1FAIpQLSdA8fEgBiPH8WMP_KFr2WwZC7xMhzbPZAeHOLmXEfYaNllKfg/formResponse", entryName:"entry.1349131443", entryMinutes:"entry.497255741", entryTrack:"entry.732802645", entryResult:"entry.1397230054", entryLeseuebung:"entry.68288610", entryLeseErgebnis:"entry.218708259", entryTestErgebnis:"entry.722797430", entryRedewendungen:"entry.1428932856"},
-  2: {url:"https://docs.google.com/forms/d/e/1FAIpQLSdBLlHrWkg16Cp304BdbmafDa9bBc25g9uv6-18O8SMGSA6Mg/formResponse", entryName:"entry.1059793990", entryMinutes:"entry.484509951", entryTrack:"entry.1504220219", entryResult:"entry.1737597850", entryLeseuebung:"entry.1784745108", entryLeseErgebnis:"entry.2117317377"},
-  3: {url:"https://docs.google.com/forms/d/e/1FAIpQLSe6c0v7E2kO6S2pnTTJanR2e-CATpg_VmHBWLa7M-tiHrH2mw/formResponse", entryName:"entry.1349131443", entryMinutes:"entry.497255741", entryTrack:"entry.732802645", entryResult:"entry.1397230054", entryLeseuebung:"entry.953879750", entryLeseErgebnis:"entry.428923870"},
-  4: {url:"https://docs.google.com/forms/d/e/1FAIpQLSeZkyLf4l6x8zOGndk3FIcMCDH9ni-9w4S5YogTn08hsPnaqg/formResponse", entryName:"entry.1349131443", entryMinutes:"entry.497255741", entryTrack:"entry.732802645", entryResult:"entry.1397230054", entryLeseuebung:"entry.1590662338", entryLeseErgebnis:"entry.1831681849"},
-  5: {url:"https://docs.google.com/forms/d/e/1FAIpQLScoHOfEhCqAx2r-x7OIY5LLmlVpn5GUp8x-qRszdUygdTfWIQ/formResponse", entryName:"entry.1349131443", entryMinutes:"entry.497255741", entryTrack:"entry.732802645", entryResult:"entry.1397230054", entryLeseuebung:"entry.318900136", entryLeseErgebnis:"entry.1902329642"},
-  6: {url:"https://docs.google.com/forms/d/e/1FAIpQLSfOWK-jriiZMYSacd2CRz0FSMDc0EKemeYTPwFpQc0Xkc-eoA/formResponse", entryName:"entry.1349131443", entryMinutes:"entry.497255741", entryTrack:"entry.732802645", entryResult:"entry.1397230054", entryLeseuebung:"entry.1898187553", entryLeseErgebnis:"entry.438118217"}
+  2: {url:"https://docs.google.com/forms/d/e/1FAIpQLSdBLlHrWkg16Cp304BdbmafDa9bBc25g9uv6-18O8SMGSA6Mg/formResponse", entryName:"entry.1059793990", entryMinutes:"entry.484509951", entryTrack:"entry.1504220219", entryResult:"entry.1737597850", entryLeseuebung:"entry.1784745108", entryLeseErgebnis:"entry.2117317377", entryTestErgebnis:"entry.386869221", entryRedewendungen:"entry.1227613911"},
+  3: {url:"https://docs.google.com/forms/d/e/1FAIpQLSe6c0v7E2kO6S2pnTTJanR2e-CATpg_VmHBWLa7M-tiHrH2mw/formResponse", entryName:"entry.1349131443", entryMinutes:"entry.497255741", entryTrack:"entry.732802645", entryResult:"entry.1397230054", entryLeseuebung:"entry.953879750", entryLeseErgebnis:"entry.428923870", entryTestErgebnis:"entry.431168305", entryRedewendungen:"entry.742477437"},
+  4: {url:"https://docs.google.com/forms/d/e/1FAIpQLSeZkyLf4l6x8zOGndk3FIcMCDH9ni-9w4S5YogTn08hsPnaqg/formResponse", entryName:"entry.1349131443", entryMinutes:"entry.497255741", entryTrack:"entry.732802645", entryResult:"entry.1397230054", entryLeseuebung:"entry.1590662338", entryLeseErgebnis:"entry.1831681849", entryTestErgebnis:"entry.1124141849", entryRedewendungen:"entry.372753175"},
+  5: {url:"https://docs.google.com/forms/d/e/1FAIpQLScoHOfEhCqAx2r-x7OIY5LLmlVpn5GUp8x-qRszdUygdTfWIQ/formResponse", entryName:"entry.1349131443", entryMinutes:"entry.497255741", entryTrack:"entry.732802645", entryResult:"entry.1397230054", entryLeseuebung:"entry.318900136", entryLeseErgebnis:"entry.1902329642", entryTestErgebnis:"entry.1364264274", entryRedewendungen:"entry.1047254786"},
+  6: {url:"https://docs.google.com/forms/d/e/1FAIpQLSfOWK-jriiZMYSacd2CRz0FSMDc0EKemeYTPwFpQc0Xkc-eoA/formResponse", entryName:"entry.1349131443", entryMinutes:"entry.497255741", entryTrack:"entry.732802645", entryResult:"entry.1397230054", entryLeseuebung:"entry.1898187553", entryLeseErgebnis:"entry.438118217", entryTestErgebnis:"entry.165371200", entryRedewendungen:"entry.678946831"}
 };
 /* Zuordnung der Sprachauswahl (Startbildschirm) zu ISO-639-1-Codes für die
    automatische Übersetzungsprüfung. Sprachen ohne Eintrag (z. B. "Andere")
@@ -2716,6 +2716,141 @@ const REDEWENDUNG_DATA = {
       situation: "Auf derselben Party begrüßt dich jemand mit \"Schöne Wohnung!\". Du stimmst kurz zu und stellst gleich eine Anschlussfrage, um das Gespräch weiterzuführen.",
       erwartungshinweis: "Kurze Zustimmung (z. B. \"Ja, finde ich auch.\"), gefolgt von einer freundlichen Anschlussfrage zum Kennenlernen (z. B. nach dem Wohnort).",
       beispiel: "Ja, finde ich auch. Wohnst du in der Nähe?"
+    }
+  ],
+  2: [
+    {
+      situation: "Du möchtest jemanden aus dem Theaterverein fragen, ob sie/er am Samstag zur Generalprobe kommen kann – du weißt aber, dass die Person gerade viel zu tun hat.",
+      erwartungshinweis: "Höfliche Bitte mit Infinitiv mit zu (z. B. \"Hättest du Lust, ... zu kommen?\"), die Rücksicht auf die Zeit der Person nimmt. Eine zu direkte Aufforderung (\"Komm am Samstag zur Probe!\") wirkt hier unpassend.",
+      beispiel: "Hättest du vielleicht Lust, am Samstag zur Generalprobe zu kommen, falls es zeitlich passt?"
+    },
+    {
+      situation: "Jemand lädt dich spontan ins Theater ein, aber du hast schon eine Verabredung. Sag höflich ab und schlage einen anderen Termin vor.",
+      erwartungshinweis: "Höfliche Absage (z. B. mit \"vorhaben, zu ...\") plus Alternativvorschlag. Ein einfaches \"Nein, keine Zeit\" ohne Begründung oder Alternative wäre zu abweisend.",
+      beispiel: "Das ist total nett, aber ich habe leider schon vor, heute Abend etwas anderes zu machen. Wollen wir stattdessen nächste Woche gehen?"
+    },
+    {
+      situation: "Du arbeitest hinter der Bühne und möchtest eine neue Kollegin bitten, dir beim Kulissenaufbau zu helfen, während die anderen noch proben.",
+      erwartungshinweis: "Höfliche Bitte mit einem während-Nebensatz, der die gleichzeitige Handlung beschreibt.",
+      beispiel: "Könntest du mir helfen, die Kulissen aufzubauen, während die anderen noch proben?"
+    },
+    {
+      situation: "Der Regisseur fragt, ob du bereit bist, eine größere Rolle zu übernehmen. Du bist unsicher, willst aber nicht direkt ablehnen.",
+      erwartungshinweis: "Vorsichtige, zurückhaltende Reaktion mit Infinitiv mit zu (\"bereit sein, zu ...\"), die um Bedenkzeit bittet, statt sofort ja oder nein zu sagen.",
+      beispiel: "Das freut mich sehr, aber ich müsste kurz überlegen, ob ich bereit bin, so eine große Rolle zu übernehmen."
+    },
+    {
+      situation: "Nach der Premiere lobt dich jemand aus dem Publikum für deine Leistung. Bedanke dich höflich und frage freundlich nach dessen Eindruck vom Stück.",
+      erwartungshinweis: "Dank plus Anschlussfrage, damit das Gespräch weiterläuft – ein knappes \"Danke\" ohne Gegenfrage wirkt hier abrupt.",
+      beispiel: "Vielen Dank, das freut mich wirklich! Wie hat Ihnen das Stück insgesamt gefallen?"
+    }
+  ],
+  3: [
+    {
+      situation: "In einer Gruppendiskussion über ehrenamtliches Engagement bist du anderer Meinung als die Vorrednerin. Widersprich höflich, aber klar.",
+      erwartungshinweis: "Höfliche Widerspruchsformel mit Konjunktiv II (\"Ich würde eher sagen, dass ...\"). Ein schroffes \"Das stimmt nicht\" ist in einer Diskussion unpassend.",
+      beispiel: "Ich sehe das ein bisschen anders. Ich würde sagen, dass Ehrenamt vor allem Zeit braucht, nicht nur guten Willen."
+    },
+    {
+      situation: "Ein Freund würde gerne bei der Tafel mithelfen, hat aber Angst, sich nicht richtig zu verhalten. Ermutige ihn.",
+      erwartungshinweis: "Ermutigende Aussage mit Konjunktiv II (\"Das würde bestimmt gut laufen, ...\").",
+      beispiel: "Das würde bestimmt gut laufen – die freuen sich sicher über jede helfende Hand, ganz egal, wie viel Erfahrung du hast."
+    },
+    {
+      situation: "Erkläre, warum du dich für ehrenamtliche Arbeit im Tierheim entschieden hast. Verbinde Grund und Folge mit \"deshalb\", \"darum\" oder \"deswegen\".",
+      erwartungshinweis: "Grund plus Konnektor (deshalb/darum/deswegen), der Grund und Folge logisch verbindet. Zwei unverbundene Sätze ohne Konnektor erfüllen die Aufgabe nicht.",
+      beispiel: "Ich liebe Tiere schon mein ganzes Leben, deshalb helfe ich jetzt jede Woche im Tierheim mit."
+    },
+    {
+      situation: "Jemand fragt dich in einer Diskussionsrunde, ob du lieber Geld spenden oder selbst Zeit investieren würdest. Begründe deine Meinung.",
+      erwartungshinweis: "Meinung mit Konjunktiv II plus Konnektor (deshalb/darum/deswegen) zur Begründung.",
+      beispiel: "Ich würde lieber Zeit investieren – Geld kann jeder geben, aber persönliche Hilfe ist seltener, darum finde ich sie wertvoller."
+    },
+    {
+      situation: "Ein Vereinsmitglied schlägt eine Idee vor, die du nicht gut findest. Widersprich höflich, ohne die Person zu verletzen.",
+      erwartungshinweis: "Abgeschwächter Widerspruch mit Konjunktiv II (\"Ich hätte da noch Bedenken ...\") statt direkter Ablehnung.",
+      beispiel: "Das ist eine interessante Idee, aber ich hätte da noch Bedenken – vielleicht könnten wir das nochmal genauer besprechen?"
+    }
+  ],
+  4: [
+    {
+      situation: "Beschreibe einem Freund die Unterkunft aus deinem letzten Urlaub – baue dabei einen eingeschobenen Relativsatz ein, der die Unterkunft näher beschreibt.",
+      erwartungshinweis: "Eingeschobener Relativsatz mitten im Hauptsatz (z. B. \"Die Pension, die ..., war ...\"), nicht nur ein angehängter Relativsatz am Satzende.",
+      beispiel: "Die Pension, die mitten im Wald lag, war wirklich gemütlich."
+    },
+    {
+      situation: "Du bewertest online eine Ferienwohnung, mit der du – obwohl sie sehr klein war – trotzdem zufrieden warst.",
+      erwartungshinweis: "obwohl-Satz mit echtem Gegensatz zwischen Nebensatz und Hauptsatz.",
+      beispiel: "Obwohl die Wohnung ziemlich klein war, habe ich mich dort sehr wohlgefühlt."
+    },
+    {
+      situation: "Ein Kollege fragt dich nach einem guten Wanderweg in der Nähe. Beschreibe ihn mit einem eingeschobenen Relativsatz, der einen Aspekt des Wegs erklärt.",
+      erwartungshinweis: "Eingeschobener Relativsatz mitten im Satz.",
+      beispiel: "Der Weg, der am See entlangführt, ist nicht zu anstrengend und wunderschön."
+    },
+    {
+      situation: "Erzähl von einem Campingausflug, der – obwohl das Wetter schlecht war – trotzdem sehr schön war.",
+      erwartungshinweis: "obwohl-Satz mit Gegensatz zwischen schlechtem Wetter und positivem Gesamteindruck.",
+      beispiel: "Obwohl es die ganze Zeit geregnet hat, war das Wochenende richtig schön."
+    },
+    {
+      situation: "Ein Bekannter überlegt, wohin er im Urlaub fahren soll, und bittet dich um eine ehrliche Einschätzung zu einem Ort, den du kennst – inklusive eines kleinen Nachteils.",
+      erwartungshinweis: "Empfehlung mit einer ehrlichen Einschränkung, z. B. mit obwohl oder einem Relativsatz. Eine rein positive Antwort ohne Einschränkung erfüllt die Aufgabe nicht vollständig.",
+      beispiel: "Ich kann dir die Insel wirklich empfehlen, obwohl es dort abends nicht viel zu tun gibt."
+    }
+  ],
+  5: [
+    {
+      situation: "Erkläre einer Freundin, warum deine Großeltern früher ausgewandert sind.",
+      erwartungshinweis: "wegen + Genitiv (nicht Dativ, z. B. nicht \"wegen dem Krieg\").",
+      beispiel: "Wegen der schwierigen wirtschaftlichen Lage sind meine Großeltern damals ausgewandert."
+    },
+    {
+      situation: "Erzähl, dass deine Familie trotz aller Schwierigkeiten in der neuen Heimat glücklich wurde.",
+      erwartungshinweis: "trotz + Genitiv.",
+      beispiel: "Trotz der anfänglichen Schwierigkeiten hat sich meine Familie hier ein gutes Leben aufgebaut."
+    },
+    {
+      situation: "Ein Freund fragt, worüber du dich mit deiner Oma am liebsten unterhältst. Antworte mit einem da-Kompositum.",
+      erwartungshinweis: "da-Kompositum (z. B. darüber/davon), nicht \"über das\" oder \"über es\".",
+      beispiel: "Am liebsten unterhalte ich mich mit ihr darüber, wie das Leben früher war."
+    },
+    {
+      situation: "Du dolmetschst zwischen deiner Oma und einer Behördenmitarbeiterin, die eine Frage zu ihrer Herkunft stellt. Frag höflich nach, worauf sich die Frage genau bezieht.",
+      erwartungshinweis: "wo-Kompositum (z. B. worauf/wovon), nicht \"auf was\".",
+      beispiel: "Entschuldigung, könnten Sie kurz erklären, worauf sich die Frage genau bezieht?"
+    },
+    {
+      situation: "Erzähl, dass deine Familie während des Kriegs plötzlich alles zurücklassen musste.",
+      erwartungshinweis: "während + Genitiv.",
+      beispiel: "Während des Krieges musste meine Familie plötzlich alles zurücklassen."
+    }
+  ],
+  6: [
+    {
+      situation: "Erklär einem Kollegen, was du normalerweise machst, bevor die Weihnachtsfeiertage beginnen.",
+      erwartungshinweis: "bevor-Satz mit korrekter zeitlicher Reihenfolge (die bevor-Handlung liegt zeitlich vor der Haupthandlung).",
+      beispiel: "Bevor die Feiertage beginnen, backe ich immer mit meiner Familie Plätzchen."
+    },
+    {
+      situation: "Beschreibe, was in deiner Familie während der Weihnachtsvorbereitungen passiert.",
+      erwartungshinweis: "während-Satz mit zwei gleichzeitigen Handlungen.",
+      beispiel: "Während wir den Baum schmücken, hört meine Mutter immer Weihnachtslieder."
+    },
+    {
+      situation: "Jemand fragt dich, ob du Weihnachtsdeko eher kitschig oder schön findest. Begründe kurz deine Meinung.",
+      erwartungshinweis: "Klare Meinungsäußerung mit kurzer Begründung, nicht nur \"ja\" oder \"nein\".",
+      beispiel: "Ich finde bunte Lichterketten total kitschig, aber irgendwie mag ich das trotzdem."
+    },
+    {
+      situation: "Dein Neffe möchte wissen, wer ihm das Geschenk gegeben hat. Antworte mit der richtigen Pronomenreihenfolge.",
+      erwartungshinweis: "Pronomenreihenfolge Akkusativ vor Dativ (\"Ich habe es ihm gegeben.\"), nicht umgekehrt.",
+      beispiel: "Das Geschenk? Ich habe es ihm heimlich unter den Baum gelegt."
+    },
+    {
+      situation: "Eine Freundin fragt, ob du ihr deine Plätzchen-Rezepte schicken kannst. Bestätige mit korrekter Pronomenreihenfolge.",
+      erwartungshinweis: "Pronomenreihenfolge Akkusativ vor Dativ (\"Ich schicke sie dir.\").",
+      beispiel: "Klar, ich schicke sie dir heute Abend noch."
     }
   ]
   // weitere Kapitel nach demselben Muster ergänzen, sobald sie fertig sind.
