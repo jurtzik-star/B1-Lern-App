@@ -743,6 +743,7 @@
     <div class="card">
       <div class="topline">
         <button class="btn-ghost" data-back="menu">← Menü</button>
+        <span class="pill" id="ktTimer" style="display:none;">⏱ 45:00</span>
         <span class="pill" id="ktCounter" style="display:none;">1 / 20</span>
       </div>
 
@@ -753,7 +754,8 @@
 
       <div id="ktIntroBlock" style="display:none;">
         <h2 style="margin-top:0;color:var(--green-900);font-size:1.05rem;">📝 Kapiteltest</h2>
-        <p class="hint-text" style="text-align:left;" id="ktIntroCount">Dieser Test prüft Hören, Wortschatz, Lesen, Grammatik und Schreiben – <span id="ktIntroCountNum">20</span> Aufgaben insgesamt. Du bekommst nach jeder Antwort direkte Rückmeldung, am Ende ein Gesamtergebnis. Nimm dir etwas Zeit am Stück.</p>
+        <p class="hint-text" style="text-align:left;" id="ktIntroCount">Dieser Test prüft Hören, Wortschatz, Lesen, Grammatik und Schreiben – <span id="ktIntroCountNum">20</span> Aufgaben insgesamt. Du bekommst nach jeder Antwort direkte Rückmeldung, am Ende ein Gesamtergebnis.</p>
+        <p class="hint-text" style="text-align:left;color:var(--red);"><b>Achtung:</b> Zeitlimit 45 Minuten, der Timer läuft ab dem Start durch. Ein Pausieren ist nicht möglich – verlässt du die App/den Tab währenddessen, gilt der Versuch als abgebrochen. Nimm dir also am Stück ausreichend Zeit.</p>
         <div class="row-btns" style="justify-content:center;">
           <button class="btn-primary" id="btnKtStart">Test starten ▶️</button>
         </div>
@@ -800,6 +802,14 @@
         <div id="ktResultBreakdown" style="font-size:0.9rem;margin:10px 0;"></div>
         <div class="row-btns" style="justify-content:center;">
           <button class="btn-secondary" data-back="menu">Zurück zum Menü</button>
+        </div>
+      </div>
+
+      <div id="ktAbortedBlock" style="display:none;">
+        <h2 style="margin-top:0;color:var(--red);font-size:1.05rem;">⛔ Test abgebrochen</h2>
+        <p class="hint-text" style="text-align:left;">Der Kapiteltest wurde beendet, weil die App währenddessen verlassen wurde (z. B. Tab gewechselt oder App geschlossen). Aus Prüfungsgründen lässt sich ein begonnener Test nicht pausieren und fortsetzen – du kannst ihn aber jederzeit neu starten.</p>
+        <div class="row-btns" style="justify-content:center;">
+          <button class="btn-primary" id="btnKtAbortedRestart">Zurück zum Test-Start</button>
         </div>
       </div>
     </div>
@@ -2611,7 +2621,7 @@ const KAPITELTEST_DATA = {
       {
         label: "Teil 1 · Hören",
         instruction: "Hör dir das Gespräch an. Richtig oder falsch?",
-        audio: "audio/kapiteltest/track1.mp3",
+        audio: "audio/kapiteltest-k1/track1.mp3",
         items: [
           {q:"Vor seinem Auslandssemester konnte Tim schon sehr gut Italienisch.", answer:"Falsch", wrong:["Richtig"], hint:"Tim spricht am Anfang des Gesprächs über seine Sprachkenntnisse vor dem Auslandssemester."},
           {q:"Tim durfte die mündlichen Prüfungen auf Englisch machen.", answer:"Richtig", wrong:["Falsch"], hint:"Tim erzählt, wie die Prüfungen an der Gastuniversität abliefen."},
@@ -3126,6 +3136,12 @@ function showScreen(id){
   if(id !== "kapiteltest"){
     const ktAudioEl = document.getElementById("ktAudio");
     if(ktAudioEl && !ktAudioEl.paused){ ktAudioEl.pause(); }
+    // Wer während eines laufenden Kapiteltests wegnavigiert (Menü, anderes
+    // Kapitel ...), "pausiert" damit faktisch den Test - das soll laut
+    // Vorgabe nicht möglich sein. Der Test gilt dann als abgebrochen; die
+    // eigentliche Hinweis-Anzeige passiert beim nächsten Öffnen des
+    // Kapiteltests (siehe openKapiteltest()).
+    endKtDueToLeaving();
   }
   document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
   document.getElementById("screen-"+id).classList.add("active");
@@ -4382,7 +4398,97 @@ document.getElementById("btnLesenRetry").addEventListener("click", ()=>{
    am Ende, der über den Schreibtraining-Worker KI-bewertet wird. Freigabe
    pro Kapitel über TEST_RELEASED_CHAPTERS (siehe Kommentar dort), Inhalte
    über KAPITELTEST_DATA. */
+/* ---------------- KAPITELTEST: Zeitlimit + Pause-Sperre ----------------
+   Vorgabe laut Lehrwerk: 45 Minuten pro Kapiteltest, ohne dass die TN
+   währenddessen pausieren können (Tab wechseln, App schließen o. Ä.).
+   Wichtig: Das hier ist eine reine Client-Web-App ohne eigenen Server im
+   Hintergrund - gegen technisch sehr versierte TN (z. B. über die
+   Entwicklertools) ist das nicht wasserdicht, für den normalen
+   Prüfungsalltag (Tab-Wechsel, Sperrbildschirm, App verlassen) reicht es
+   aber zuverlässig aus. */
+const KAPITELTEST_MINUTEN = 45;
+let ktTimerInterval = null;
+function formatKtZeit(ms){
+  const totalSec = Math.max(0, Math.round(ms/1000));
+  const min = Math.floor(totalSec/60);
+  const sec = totalSec%60;
+  return min + ":" + (sec<10 ? "0"+sec : sec);
+}
+function updateKtTimerDisplay(){
+  const el = document.getElementById("ktTimer");
+  const remaining = state.ktDeadline - Date.now();
+  el.textContent = "⏱ " + formatKtZeit(remaining);
+  const knapp = remaining <= 5*60*1000;
+  el.style.color = knapp ? "var(--red)" : "";
+  el.style.fontWeight = knapp ? "700" : "";
+  if(remaining <= 0){
+    handleKtTimeout();
+  }
+}
+function startKtTimer(){
+  stopKtTimer();
+  state.ktDeadline = Date.now() + KAPITELTEST_MINUTEN*60*1000;
+  document.getElementById("ktTimer").style.display = "inline-block";
+  updateKtTimerDisplay();
+  ktTimerInterval = setInterval(updateKtTimerDisplay, 1000);
+}
+function stopKtTimer(){
+  if(ktTimerInterval){ clearInterval(ktTimerInterval); ktTimerInterval = null; }
+  document.getElementById("ktTimer").style.display = "none";
+}
+// Zeit abgelaufen: noch offene Schreiben-Eingabe (falls vorhanden und lang
+// genug) wird versucht abzuschicken, danach wird der Test regulär mit dem
+// bisherigen Stand beendet (offene/nicht erreichte Aufgaben zählen nicht).
+async function handleKtTimeout(){
+  if(!state.ktActive) return;
+  stopKtTimer();
+  const schreibenVisible = document.getElementById("ktSchreibenBlock").style.display === "block";
+  if(schreibenVisible && state.ktSchreibenPunkte === null){
+    const text = document.getElementById("ktSchreibenText").value.trim();
+    document.getElementById("btnKtSchreibenSubmit").disabled = true;
+    if(text.length >= 10){
+      try{ await submitKtSchreiben(); }catch(e){ /* weiter ohne Bewertung */ }
+    }
+  }
+  state.ktActive = false;
+  finishKapiteltest();
+}
+// Test wird verlassen (Tab-Wechsel/App zu, oder Navigation innerhalb der
+// App) - Timer stoppen und merken, dass beim nächsten Öffnen des
+// Kapiteltests der Abbruch-Hinweis statt der normalen Ansicht kommt.
+function endKtDueToLeaving(){
+  if(!state.ktActive) return;
+  state.ktActive = false;
+  stopKtTimer();
+  state.ktWasAborted = true;
+}
+function showKtAbortedUI(){
+  document.getElementById("ktLockedBlock").style.display = "none";
+  document.getElementById("ktIntroBlock").style.display = "none";
+  document.getElementById("ktRunningBlock").style.display = "none";
+  document.getElementById("ktSchreibenBlock").style.display = "none";
+  document.getElementById("ktResultBlock").style.display = "none";
+  document.getElementById("ktCounter").style.display = "none";
+  document.getElementById("ktAbortedBlock").style.display = "block";
+  state.ktWasAborted = false;
+}
+document.addEventListener("visibilitychange", ()=>{
+  // Anders als bei endKtDueToLeaving() über showScreen() ist man hier noch
+  // auf dem Kapiteltest-Bildschirm (nur Tab/App kurz verlassen) - deshalb
+  // die Abbruch-Ansicht direkt zeigen, statt erst auf ein erneutes Öffnen
+  // zu warten.
+  if(document.hidden && state.ktActive){
+    endKtDueToLeaving();
+    showKtAbortedUI();
+  }
+});
+document.getElementById("btnKtAbortedRestart").addEventListener("click", openKapiteltest);
 function openKapiteltest(){
+  if(state.ktWasAborted){
+    showKtAbortedUI();
+    showScreen("kapiteltest");
+    return;
+  }
   const chapterData = KAPITELTEST_DATA[state.chapter];
   // Wie bei der Kapitel-Sperre selbst: im Vorschau-Modus (?vorschau=1) ist der
   // Kapiteltest auch vor der offiziellen Freischaltung (TEST_RELEASED_CHAPTERS)
@@ -4393,6 +4499,7 @@ function openKapiteltest(){
   document.getElementById("ktRunningBlock").style.display = "none";
   document.getElementById("ktSchreibenBlock").style.display = "none";
   document.getElementById("ktResultBlock").style.display = "none";
+  document.getElementById("ktAbortedBlock").style.display = "none";
   document.getElementById("ktCounter").style.display = "none";
   if(unlocked){
     const mcCount = chapterData.parts.reduce((sum,p)=>sum+p.items.length, 0);
@@ -4421,9 +4528,13 @@ function startKapiteltest(){
   state.ktScore = 0;
   state.ktSchreibenPunkte = null;
   state.ktPartScores = partScores;
+  state.ktActive = true;
+  state.ktFinished = false;
+  document.getElementById("ktAbortedBlock").style.display = "none";
   document.getElementById("ktIntroBlock").style.display = "none";
   document.getElementById("ktRunningBlock").style.display = "block";
   document.getElementById("ktCounter").style.display = "inline-block";
+  startKtTimer();
   renderKtItem();
 }
 document.getElementById("btnKtStart").addEventListener("click", startKapiteltest);
@@ -4471,7 +4582,7 @@ function renderKtItem(){
   });
 }
 function onKtOptionClick(btn, item){
-  if(state.ktLocked || btn.disabled) return;
+  if(!state.ktActive || state.ktLocked || btn.disabled) return;
   const fb = document.getElementById("ktFeedback");
   if(btn.dataset.opt === item.answer){
     state.ktScore++;
@@ -4493,6 +4604,7 @@ function onKtOptionClick(btn, item){
   }
 }
 function nextKtItem(){
+  if(!state.ktActive) return;
   if(state.ktIndex < state.ktQueue.length - 1){
     state.ktIndex++;
     renderKtItem();
@@ -4581,10 +4693,15 @@ async function submitKtSchreiben(){
 document.getElementById("btnKtSchreibenSubmit").addEventListener("click", submitKtSchreiben);
 document.getElementById("btnKtSchreibenWeiter").addEventListener("click", finishKapiteltest);
 function finishKapiteltest(){
+  if(state.ktFinished) return;
+  state.ktFinished = true;
+  state.ktActive = false;
+  stopKtTimer();
   const aufgabe = KAPITELTEST_DATA[state.chapter] && KAPITELTEST_DATA[state.chapter].schreiben;
   const schreibenPunkte = state.ktSchreibenPunkte || 0;
   const score = state.ktScore + schreibenPunkte;
   const total = state.ktQueue.length + (aufgabe ? aufgabe.maxPunkte : 0);
+  document.getElementById("ktRunningBlock").style.display = "none";
   document.getElementById("ktSchreibenBlock").style.display = "none";
   document.getElementById("ktCounter").style.display = "none";
   document.getElementById("ktResultScore").textContent = score;
