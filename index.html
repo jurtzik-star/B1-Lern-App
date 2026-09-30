@@ -2611,7 +2611,7 @@ const KAPITELTEST_DATA = {
       {
         label: "Teil 1 · Hören",
         instruction: "Hör dir das Gespräch an. Richtig oder falsch?",
-        audio: "audio/kapiteltest-k1/track1.mp3",
+        audio: "audio/kapiteltest/track1.mp3",
         items: [
           {q:"Vor seinem Auslandssemester konnte Tim schon sehr gut Italienisch.", answer:"Falsch", wrong:["Richtig"], hint:"Tim spricht am Anfang des Gesprächs über seine Sprachkenntnisse vor dem Auslandssemester."},
           {q:"Tim durfte die mündlichen Prüfungen auf Englisch machen.", answer:"Richtig", wrong:["Falsch"], hint:"Tim erzählt, wie die Prüfungen an der Gastuniversität abliefen."},
@@ -2680,7 +2680,7 @@ const KAPITELTEST_DATA = {
       {
         label: "Teil 1 · Hören",
         instruction: "Hör dir das Gespräch an. Richtig oder falsch?",
-        audio: "audio/kapiteltest/kapitel2_hoeren.mp3",
+        audio: "audio/kapiteltest-k2/kapitel2_hoeren.mp3",
         items: [
           {q:"Melissa und Fabian planen, zusammen zum Amateurtheaterfestival „Bühne frei“ zu gehen.", answer:"Richtig", wrong:["Falsch"], hint:"Melissa erzählt am Anfang, wann das Festival ist."},
           {q:"Am Freitagabend gibt es beim Festival schon die ersten Aufführungen.", answer:"Falsch", wrong:["Richtig"], hint:"Melissa beschreibt den Ablauf: Freitag ist nur die Eröffnung, die Aufführungen sind erst am Wochenende."},
@@ -2697,7 +2697,7 @@ const KAPITELTEST_DATA = {
       {
         label: "Teil 1 · Hören",
         instruction: "Hör dir das Interview an. Richtig oder falsch?",
-        audio: "audio/kapiteltest/kapitel3_hoeren.mp3",
+        audio: "audio/kapiteltest-k3/kapitel3_hoeren.mp3",
         items: [
           {q:"Sabine Reuter organisiert die Vorlesepatenschaften erst seit einem Jahr.", answer:"Falsch", wrong:["Richtig"], hint:"Der Moderator stellt Sabine Reuter zu Beginn vor."},
           {q:"Die Vorlesepatinnen und -paten gehen einmal pro Woche in Schulen oder in die Bücherei.", answer:"Richtig", wrong:["Falsch"], hint:"Sabine beschreibt, wie oft sie aktiv sind."},
@@ -2713,7 +2713,7 @@ const KAPITELTEST_DATA = {
       {
         label: "Teil 1 · Hören",
         instruction: "Hör dir das Interview an. Richtig oder falsch?",
-        audio: "audio/kapiteltest/kapitel4_hoeren.mp3",
+        audio: "audio/kapiteltest-k4/kapitel4_hoeren.mp3",
         items: [
           {q:"Thomas Vogel arbeitet seit zwölf Jahren als Ranger im Nationalpark.", answer:"Richtig", wrong:["Falsch"], hint:"Die Moderatorin stellt Thomas Vogel zu Beginn vor."},
           {q:"Der Nationalpark wurde schon vor über fünfzig Jahren gegründet.", answer:"Falsch", wrong:["Richtig"], hint:"Thomas Vogel nennt das Gründungsjahr des Parks."},
@@ -2730,7 +2730,7 @@ const KAPITELTEST_DATA = {
       {
         label: "Teil 1 · Hören",
         instruction: "Hör dir das Gespräch an. Richtig oder falsch?",
-        audio: "audio/kapiteltest/kapitel5_hoeren.mp3",
+        audio: "audio/kapiteltest-k5/kapitel5_hoeren.mp3",
         items: [
           {q:"Ingrid ist 1978 nach Toronto ausgewandert.", answer:"Richtig", wrong:["Falsch"], hint:"Ingrid nennt das Jahr und die Stadt gleich zu Beginn."},
           {q:"Der Opa hatte in Deutschland schon eine feste Stelle als Ingenieur.", answer:"Falsch", wrong:["Richtig"], hint:"Ingrid erklärt, warum sie ausgewandert sind."},
@@ -2747,7 +2747,7 @@ const KAPITELTEST_DATA = {
       {
         label: "Teil 1 · Hören (Marktbericht)",
         instruction: "Hör dir den Bericht an. Richtig oder falsch?",
-        audio: "audio/kapiteltest/kapitel6_hoeren_teil1.mp3",
+        audio: "audio/kapiteltest-k6/kapitel6_hoeren_teil1.mp3",
         items: [
           {q:"Auf dem Weihnachtsmarkt in Lindenau stehen über 80 Hütten.", answer:"Richtig", wrong:["Falsch"], hint:"Julia Krämer nennt die Anzahl der Hütten."},
           {q:"Die neue Eisbahn ist nur bis 20 Uhr geöffnet.", answer:"Falsch", wrong:["Richtig"], hint:"Julia Krämer nennt die Öffnungszeit der Eisbahn."},
@@ -2759,7 +2759,7 @@ const KAPITELTEST_DATA = {
       {
         label: "Teil 2 · Hören (Sprachnachrichten)",
         instruction: "Hör dir die beiden Sprachnachrichten an. Richtig oder falsch?",
-        audio: "audio/kapiteltest/kapitel6_hoeren_teil2.mp3",
+        audio: "audio/kapiteltest-k6/kapitel6_hoeren_teil2.mp3",
         items: [
           {q:"Anna braucht noch Kerzen und Marzipan.", answer:"Richtig", wrong:["Falsch"], hint:"Anna zählt auf, was ihr noch fehlt."},
           {q:"Anna und Pia wollen sich am Samstag zum Weihnachtsmarkt treffen.", answer:"Falsch", wrong:["Richtig"], hint:"Anna schlägt einen Tag für den Besuch vor."},
@@ -3185,9 +3185,16 @@ document.getElementById("btnClearData").addEventListener("click", ()=>{
   }
 });
 
+/* Ein "vollständiger" Name braucht mindestens zwei durch Leerzeichen
+   getrennte Teile (Vor- und Nachname) - reines "ist nicht leer" reicht
+   nicht, sonst landen Einzelnamen wie "Cristian" in den Formularen/der
+   Übersicht und lassen sich dort nicht mehr eindeutig zuordnen. */
+function isVollstaendigerName(value){
+  return value.trim().split(/\s+/).filter(Boolean).length >= 2;
+}
 document.getElementById("inpName").addEventListener("input", ()=>{
   const inp = document.getElementById("inpName");
-  if(inp.value.trim()){
+  if(isVollstaendigerName(inp.value)){
     inp.classList.remove("input-error");
     document.getElementById("nameError").style.display = "none";
   }
@@ -3196,7 +3203,7 @@ document.getElementById("inpName").addEventListener("input", ()=>{
 document.getElementById("btnStart").addEventListener("click", ()=>{
   const nameInput = document.getElementById("inpName");
   const name = nameInput.value.trim();
-  if(!name){
+  if(!isVollstaendigerName(name)){
     nameInput.classList.add("input-error","shake");
     document.getElementById("nameError").style.display = "block";
     nameInput.focus();
