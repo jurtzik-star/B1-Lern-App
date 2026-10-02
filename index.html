@@ -3676,7 +3676,7 @@ updateNewsBadge();
    "gelesen/ungelesen"-Badge nötig wie bei Neuigkeiten - er soll die TN
    einfach regelmäßig ans Nachschauen erinnern). */
 const HAUSAUFGABEN = [
-  { date: "29. September 2026", text: "Kursbuch: Seiten 18–20, Aufgaben 1–5. Lern-App: Teil B bearbeiten, dazu je eine Schreib- und Sprechübung. Bitte nicht vergessen: Eintrag ins Lerntagebuch!" },
+  { date: "29. September 2026", text: "Kursbuch: Seiten 18–20, Aufgaben 1–5. Lern-App: Teil B bearbeiten, dazu je eine Schreib- und Sprechübung. Bitte nicht vergessen: Eintrag ins Lerntagebuch!", pdf: "loesungen/loesungen-2026-09-29.pdf", pdfLabel: "Lösungen zur Hausaufgabe (PDF)" },
   { date: "22. September 2026", text: "Kursbuch: Seiten 16–17, Aufgaben 1–5. Lern-App: Teil A bearbeiten, dazu je eine Schreib- und Sprechübung. Und nicht vergessen: Eintrag ins Lerntagebuch!" }
 ];
 function renderHausaufgaben(){
@@ -3693,7 +3693,8 @@ function renderHausaufgaben(){
     div.className = "news-entry";
     div.innerHTML =
       '<div class="news-date">' + entry.date + '</div>' +
-      '<p>' + entry.text + '</p>';
+      '<p>' + entry.text + '</p>' +
+      (entry.pdf ? '<p><a href="' + entry.pdf + '" target="_blank" rel="noopener" style="font-weight:700;color:#3f7a5c;">📄 ' + (entry.pdfLabel || 'Lösungen (PDF)') + '</a></p>' : '');
     wrap.appendChild(div);
   });
 }
