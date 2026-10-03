@@ -2641,7 +2641,7 @@ const RELEASED_CHAPTERS = [1, 2, 3, 4, 5, 6];
    leeres Array: Thomas trägt die Kapitelnummer hier erst ein, wenn das
    Kapitel im Unterricht fertig behandelt wurde. Bis dahin zeigt die
    Kapiteltest-Kachel im Menü den Hinweis "noch nicht freigeschaltet". */
-const TEST_RELEASED_CHAPTERS = [];
+const TEST_RELEASED_CHAPTERS = [1];
 
 /* KAPITELTEST_DATA: pro Kapitel ein Eintrag mit "parts" (Hören/Wortschatz/
    Lesen/Grammatik - Mehrfachauswahl-Aufgaben im selben {q,answer,wrong,hint}-
@@ -3591,6 +3591,12 @@ function sendRedewendungenBeacon(total){
    Solange der neueste Eintrag noch nicht angesehen wurde, zeigt die Kachel
    ein "NEU"-Badge (Speicherung pro Gerät im localStorage, keine Übertragung). */
 const NEWS = [
+  {
+    id: "2026-10-kapiteltest-1",
+    date: "3. Oktober 2026",
+    title: "Kapiteltest 1 ist freigeschaltet",
+    text: "Ihr könnt jetzt den Kapiteltest zu Kapitel 1 machen: Hören, Wortschatz, Lesen, Grammatik und eine kurze Schreibaufgabe. Wähle Kapitel 1 und öffne die Kachel „Kapiteltest“. Viel Erfolg!"
+  },
   {
     id: "2026-09-lernzeit-automatisch",
     date: "September 2026",
