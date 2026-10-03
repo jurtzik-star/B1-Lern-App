@@ -2626,7 +2626,7 @@ const CHAPTER_META = {
 /* Welches Kapitel ist gerade "aktuell" (wird auf der Kapitel-Auswahl oben und
    hervorgehoben angezeigt)? Einfach die Zahl ändern und die Datei neu
    hochladen, wenn der Kurs weiter ist. */
-const CURRENT_CHAPTER = 1;
+const CURRENT_CHAPTER = 2;
 /* Alle bereits gebauten Kapitel, aufsteigend. Neue Kapitel-Nummer hier
    ergänzen, sobald ihr Wortschatz oben in VOCAB usw. eingefügt wurde. */
 const RELEASED_CHAPTERS = [1, 2, 3, 4, 5, 6];
@@ -3592,6 +3592,12 @@ function sendRedewendungenBeacon(total){
    ein "NEU"-Badge (Speicherung pro Gerät im localStorage, keine Übertragung). */
 const NEWS = [
   {
+    id: "2026-10-kapitel-2",
+    date: "3. Oktober 2026",
+    title: "Kapitel 2 „Vorhang auf!“ ist jetzt aktuell",
+    text: "Ab heute arbeiten wir mit Kapitel 2: Wortschatz, Grammatik, Hören, Lesen und Redewendungen. Beim Schreiben gibt es zwei neue Aufgaben: „Anfrage an die Theaterkasse“ und „Eine Absage klären“. Kapitel 1 bleibt zur Wiederholung offen."
+  },
+  {
     id: "2026-10-kapiteltest-1",
     date: "3. Oktober 2026",
     title: "Kapiteltest 1 ist freigeschaltet",
@@ -3829,7 +3835,8 @@ const SCHREIBTRAINING_KURS = "B1 Oberndorf (KL T. Jurtzik)";
    hinterlegt, öffnet die Schreibtraining-App ganz normal mit ihrer
    eigenen Aufgabenauswahl. */
 const SCHREIBEN_TASK_BY_CHAPTER = {
-  1: ["b1-dtz-k1-1", "b1-dtz-k1-2"] // kapitelgenaue Aufgaben (seit 01.10.2026; allgemeiner Satz 001–007 fürs 2. Semester aufgehoben)
+  2: ["b1-dtz-k2-1", "b1-dtz-k2-2"],
+  1: ["b1-dtz-k1-1", "b1-dtz-k1-2"], // kapitelgenaue Aufgaben (seit 01.10.2026; allgemeiner Satz 001–007 fürs 2. Semester aufgehoben)
   // weitere Kapitel ergänzen, sobald passende Aufgaben in der
   // Schreibtraining-App (tasks.js) angelegt sind, z.B. 2: ["b1-dtz-00x"]
 };
