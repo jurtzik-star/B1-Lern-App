@@ -155,6 +155,19 @@
   .quiz-options button.opt-full{display:block;width:100%;text-align:left;min-width:0;}
   audio.listen-audio{width:100%;margin:6px 0 4px;}
   .checklist{display:flex;flex-direction:column;gap:8px;margin:10px 0 4px;}
+  .sb-text{background:var(--green-50);border:1px solid var(--green-100);border-radius:12px;padding:14px 16px;font-size:0.95rem;line-height:2.1;color:var(--green-900);}
+  .sb-text p{margin:0 0 10px;}
+  .sb-gapwrap{white-space:nowrap;}
+  select.sb-gap{font:inherit;font-size:0.9rem;padding:2px 4px;border:2px solid var(--green-600);border-radius:8px;background:#fff;color:var(--green-900);max-width:12.5em;}
+  select.sb-gap.sb-ok{border-color:var(--green-600);background:var(--green-100);font-weight:700;}
+  select.sb-gap.sb-bad{border-color:var(--red);background:#fbe6e3;color:var(--red);text-decoration:line-through;}
+  .sb-solution{color:var(--green-600);font-weight:700;margin-left:4px;}
+  .sb-wordbank{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 10px;}
+  .sb-word{background:#fff;border:1px solid var(--green-100);border-radius:999px;padding:3px 10px;font-size:0.85rem;color:var(--green-900);}
+  .sb-word-used{opacity:0.45;text-decoration:line-through;}
+  .sb-result{margin-top:12px;padding:12px 14px;border-radius:12px;background:#fff;border:1px solid var(--green-100);font-size:0.92rem;}
+  .sb-erkl{margin:0;padding-left:18px;}
+  .sb-erkl li{margin:0 0 6px;}
   .lesen-reference{
     background:var(--green-50);border:1px solid var(--green-100);border-radius:12px;
     padding:14px 16px;margin:0 0 14px;font-size:0.92rem;color:var(--green-900);
@@ -438,6 +451,11 @@
         <span class="emoji">📖</span>
         <h3>Lesen</h3>
         <p>Lies den Text und beantworte die Fragen.</p>
+      </div>
+      <div class="menu-item" data-go="sprachbausteine">
+        <span class="emoji">🧱</span>
+        <h3>Sprachbausteine</h3>
+        <p>Lückentexte wie in der Prüfung telc Deutsch B1: Grammatik und Wortschatz.</p>
       </div>
       <div class="menu-item" data-go="schreiben">
         <span class="emoji">✍️</span>
@@ -769,6 +787,33 @@
       </div>
       <div class="row-btns" id="matchDoneBtns" style="display:none;justify-content:center;">
         <button class="btn-primary" id="matchAgain">Neue Runde 🔁</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- SPRACHBAUSTEINE (telc Deutsch B1) -->
+  <section id="screen-sprachbausteine" class="screen">
+    <div class="card">
+      <div class="topline">
+        <button class="btn-ghost" data-back="menu">← Menü</button>
+      </div>
+      <div id="sbListBlock">
+        <p style="margin-top:0;font-weight:700;color:var(--green-900);">🧱 Sprachbausteine dieses Kapitels</p>
+        <p class="hint-text" style="text-align:left;margin:0 0 10px;">So wie in der Prüfung telc Deutsch B1: Erst alle Lücken füllen, dann auswerten. Danach siehst du die Lösungen und eine kurze Erklärung zu jedem Fehler.</p>
+        <div id="sbListWrap"></div>
+        <p class="hint-text" id="sbListEmpty" style="display:none;">Für dieses Kapitel gibt es noch keine Sprachbausteine.</p>
+      </div>
+      <div id="sbTaskBlock" style="display:none;">
+        <button class="btn-ghost" id="btnSbBackList" style="margin-bottom:8px;">← Alle Sprachbausteine</button>
+        <h2 class="tasktitle" id="sbTitle" style="font-size:1.02rem;color:var(--green-900);margin:0 0 4px;">—</h2>
+        <p class="hint-text" id="sbInstruction" style="text-align:left;margin:0 0 10px;">—</p>
+        <div class="sb-wordbank" id="sbWordbank" style="display:none;"></div>
+        <div class="sb-text" id="sbText"></div>
+        <div class="row-btns" style="justify-content:center;margin-top:12px;">
+          <button class="btn-primary" id="btnSbCheck">Auswerten ✔️</button>
+          <button class="btn-secondary" id="btnSbRetry" style="display:none;">Noch einmal 🔄</button>
+        </div>
+        <div class="sb-result" id="sbResult" style="display:none;"></div>
       </div>
     </div>
   </section>
@@ -3748,6 +3793,157 @@ const KAPITELTEST_DATA = {
   // weitere Kapitel nach demselben Muster ergänzen, sobald sie fertig sind.
 };
 
+/* ---------------- SPRACHBAUSTEINE (telc Deutsch B1) ----------------
+   Seit 05.10.2026. Der B1-Abendkurs schließt mit telc Deutsch B1 ab (kein
+   Integrationskurs, also kein DTZ) - dort gibt es den Prüfungsteil
+   „Sprachbausteine“: Teil 1 Grammatik (10 Lücken, je a/b/c), Teil 2 Lexik
+   (10 Lücken, 15 Wörter a–o, jedes Wort nur einmal). Pro Kapitel ein Text
+   je Teil, eigene Texte zu den Kapitelthemen (nicht aus dem Übungstest).
+   Wie in der Prüfung: erst alle Lücken füllen, dann auswerten. Danach
+   Lösung + kurze Erklärung zu jeder falschen Lücke. Ampel: ein Teil gilt
+   als erledigt, sobald er einmal ausgewertet wurde.
+   Neue Kapitel: einfach SPRACHBAUSTEINE_DATA[k] ergänzen. */
+const SPRACHBAUSTEINE_DATA = {
+  1: [{"id": "k1-t1", "teil": 1, "title": "Teil 1 · Grammatik: Eine E-Mail aus Valencia", "instruction": "Lies die E-Mail. Welche Lösung (a, b oder c) passt in die Lücken 1–10?", "text": "Lieber Paul,\n\nseit zwei Wochen bin ich wieder in Deutschland, {1} ich denke noch jeden Tag an Valencia. Das Semester dort war die beste Zeit {2} Lebens! Am Anfang war es nicht leicht, {3} ich konnte kaum Spanisch. Aber die anderen Studierenden haben mir sehr geholfen. Carla, mit {4} ich mir ein Zimmer im Wohnheim geteilt habe, schreibe ich immer noch jeden Tag.\n\nDie Kurse an der Uni waren ziemlich {5}, aber auch sehr interessant. Am Wochenende {6} wir oft ans Meer gefahren. {7} wir mehr Zeit hatten, haben wir auch Ausflüge in die Berge gemacht.\n\nDu hast mich doch gefragt, ob Erasmus+ auch etwas für dich wäre. Ich finde, du {8} dich unbedingt bewerben! Die Bewerbungsfrist endet {9} 15. Januar. Wenn du möchtest, erzähle ich {10} am Wochenende mehr – ruf mich einfach an!\n\nLiebe Grüße\nLena", "gaps": {"1": {"answer": "aber", "wrong": ["denn", "sondern"], "erkl": "Gegensatz: Sie ist zurück, denkt aber noch an Valencia. „sondern“ braucht vorher eine Verneinung."}, "2": {"answer": "meines", "wrong": ["meinem", "meiner"], "erkl": "Genitiv: die beste Zeit meines Lebens (das Leben → des/meines Lebens)."}, "3": {"answer": "denn", "wrong": ["weil", "deshalb"], "erkl": "Nach „denn“ bleibt das Verb auf Position 2 („ich konnte“). Nach „weil“ stünde das Verb am Ende."}, "4": {"answer": "der", "wrong": ["die", "dem"], "erkl": "„mit“ verlangt den Dativ; Carla ist feminin → mit der."}, "5": {"answer": "anstrengend", "wrong": ["anstrengende", "anstrengenden"], "erkl": "Nach „sein“ (waren ziemlich …) hat das Adjektiv keine Endung."}, "6": {"answer": "sind", "wrong": ["haben", "wurden"], "erkl": "„fahren“ (Bewegung von A nach B) bildet das Perfekt mit „sein“."}, "7": {"answer": "Wenn", "wrong": ["Als", "Wann"], "erkl": "Etwas passierte mehrmals in der Vergangenheit → „wenn“. „als“ steht für ein einmaliges Ereignis."}, "8": {"answer": "solltest", "wrong": ["sollst", "sollen"], "erkl": "Ein Rat wird höflich mit Konjunktiv II gegeben: du solltest."}, "9": {"answer": "am", "wrong": ["im", "um"], "erkl": "Datum → „am“ (am 15. Januar)."}, "10": {"answer": "dir", "wrong": ["dich", "du"], "erkl": "„jemandem etwas erzählen“ → Dativ: dir."}}}, {"id": "k1-t2", "teil": 2, "title": "Teil 2 · Wortschatz: Anfrage an das Auslandsamt", "instruction": "Lies die E-Mail und schließe die Lücken 1–10 mit den Wörtern a–o. Jedes Wort passt nur einmal. Fünf Wörter bleiben übrig.", "text": "Sehr geehrte Damen und Herren,\n\nich studiere im dritten Semester Informatik an Ihrer Hochschule und interessiere mich sehr {1} ein Auslandssemester in Schweden. Auf Ihrer Webseite habe ich dazu leider nicht alle Informationen gefunden. {2} schreibe ich Ihnen diese E-Mail.\n\nZuerst möchte ich wissen, welche {3} ich für die Bewerbung erfüllen muss. Brauche ich zum Beispiel einen Sprachnachweis für Schwedisch, {4} reichen gute Englischkenntnisse? Ich möchte {5} wissen, ob es eine finanzielle Förderung gibt.\n\nNeben dem Studium arbeite ich {6} zehn Stunden pro Woche in einem Café. Wäre es möglich, {7} Stelle für ein halbes Jahr zu unterbrechen? Das müsste ich natürlich {8} mit meinem Chef klären.\n\nIch würde mich sehr freuen, {9} Sie mir einen Termin für ein Beratungsgespräch geben könnten. Für Ihre Hilfe bedanke ich mich {10} im Voraus.\n\nMit freundlichen Grüßen\nDaniel Weber", "words": ["an", "außerdem", "damals", "deshalb", "diese", "etwa", "für", "obwohl", "oder", "schon", "trotzdem", "Voraussetzungen", "vorher", "wenn", "Zeugnisse"], "gaps": {"1": {"answer": "für", "erkl": "sich interessieren für + Akkusativ."}, "2": {"answer": "deshalb", "erkl": "Folge aus dem Satz davor: Er hat nicht alle Informationen gefunden, deshalb schreibt er."}, "3": {"answer": "Voraussetzungen", "erkl": "Voraussetzungen erfüllen = Bedingungen erfüllen. Zeugnisse kann man nicht „erfüllen“."}, "4": {"answer": "oder", "erkl": "Er nennt zwei Möglichkeiten: Sprachnachweis oder Englischkenntnisse."}, "5": {"answer": "außerdem", "erkl": "Eine weitere Frage kommt dazu → außerdem."}, "6": {"answer": "etwa", "erkl": "etwa = ungefähr (etwa zehn Stunden)."}, "7": {"answer": "diese", "erkl": "Gemeint ist die Stelle im Café, von der er gerade spricht → diese Stelle."}, "8": {"answer": "vorher", "erkl": "Zuerst mit dem Chef sprechen, dann ins Ausland → vorher."}, "9": {"answer": "wenn", "erkl": "Ich würde mich freuen, wenn … (Bedingung)."}, "10": {"answer": "schon", "erkl": "Feste Wendung: sich schon im Voraus bedanken."}}}],
+  2: [{"id": "k2-t1", "teil": 1, "title": "Teil 1 · Grammatik: Ein Abend im Theater", "instruction": "Lies die E-Mail. Welche Lösung (a, b oder c) passt in die Lücken 1–10?", "text": "Hallo Jonas,\n\ngestern war ich endlich im Stadttheater! Du weißt ja, dass ich schon lange Lust hatte, mir das neue Stück {1}. Die Karten hatte meine Schwester {2} Geburtstag geschenkt bekommen.\n\nDas Bühnenbild war fantastisch – ich habe noch nie so {3} Kulissen gesehen. {4} der Vorstellung war es ganz still im Saal. Nur der Mann {5} mir hat die ganze Zeit auf sein Handy geschaut. Das hat mich ziemlich {6}.\n\nNach der Vorstellung durften wir sogar hinter die Kulissen gehen. Die Maskenbildnerin, {7} wir dort kennengelernt haben, hat uns ihre Arbeit erklärt. Ich hätte nie gedacht, dass so viele Menschen an einem einzigen Stück {8}!\n\nHast du Lust, nächsten Monat mit mir ins Ballett zu gehen? Wir könnten uns vorher in dem Café treffen, {9} direkt neben dem Theater liegt. Ich würde mich sehr freuen, {10} du mitkommst.\n\nLiebe Grüße\nMira", "gaps": {"1": {"answer": "anzusehen", "wrong": ["ansehen", "zu ansehen"], "erkl": "Lust haben, etwas zu tun → Infinitiv mit zu. Bei trennbaren Verben steht zu in der Mitte: anzusehen."}, "2": {"answer": "zum", "wrong": ["zur", "zu"], "erkl": "Feste Wendung: zum Geburtstag (der Geburtstag → zu dem → zum)."}, "3": {"answer": "schöne", "wrong": ["schönen", "schöner"], "erkl": "Plural ohne Artikel im Akkusativ → Endung -e: so schöne Kulissen."}, "4": {"answer": "Während", "wrong": ["Wegen", "Trotz"], "erkl": "Gemeint ist die Zeit der Vorstellung → während + Genitiv."}, "5": {"answer": "neben", "wrong": ["nebenan", "zwischen"], "erkl": "„neben mir“ = direkt an meiner Seite. „zwischen“ braucht zwei Personen oder Dinge."}, "6": {"answer": "geärgert", "wrong": ["ärgern", "ärgert"], "erkl": "Perfekt: hat … geärgert (Partizip II)."}, "7": {"answer": "die", "wrong": ["der", "den"], "erkl": "Relativpronomen im Akkusativ (wir haben sie kennengelernt), feminin → die."}, "8": {"answer": "arbeiten", "wrong": ["arbeitet", "gearbeitet"], "erkl": "Im dass-Satz steht das konjugierte Verb am Ende; Subjekt „so viele Menschen“ → arbeiten."}, "9": {"answer": "das", "wrong": ["dem", "den"], "erkl": "Relativpronomen im Nominativ (das Café liegt neben dem Theater) → das."}, "10": {"answer": "wenn", "wrong": ["ob", "als"], "erkl": "Ich würde mich freuen, wenn … (Bedingung). „ob“ steht bei indirekten Ja/Nein-Fragen."}}}, {"id": "k2-t2", "teil": 2, "title": "Teil 2 · Wortschatz: Gruppenkarten für das Theater", "instruction": "Lies die E-Mail und schließe die Lücken 1–10 mit den Wörtern a–o. Jedes Wort passt nur einmal. Fünf Wörter bleiben übrig.", "text": "Sehr geehrte Damen und Herren,\n\nich unterrichte einen Deutschkurs an der Volkshochschule und möchte mit meiner Gruppe eine {1} in Ihrem Theater besuchen. Wir interessieren uns besonders {2} die Komödie „Der eingebildete Kranke“, die Sie im November spielen.\n\nWir sind {3} 14 Personen. Gibt es für Gruppen eine {4}? Einige Teilnehmende sind Studierende. Bekommen sie {5} einen günstigeren Preis?\n\nAußerdem habe ich noch einen {6}: Wäre es möglich, vor der Vorstellung eine kurze Führung hinter den {7} zu machen? Das wäre für meine Teilnehmenden sehr interessant, {8} viele von ihnen noch nie in einem Theater waren.\n\nIch wäre Ihnen sehr {9}, wenn Sie mir bald antworten könnten, {10} ich die Karten rechtzeitig bestellen kann.\n\nMit freundlichen Grüßen\nKatharina Brandt", "words": ["auch", "auf", "damit", "dankbar", "Ermäßigung", "für", "insgesamt", "Kulissen", "obwohl", "Publikum", "seit", "Spielzeit", "Vorstellung", "weil", "Wunsch"], "gaps": {"1": {"answer": "Vorstellung", "erkl": "Man besucht eine Vorstellung (Aufführung). Eine Spielzeit dauert viele Monate."}, "2": {"answer": "für", "erkl": "sich interessieren für + Akkusativ."}, "3": {"answer": "insgesamt", "erkl": "insgesamt = alle zusammen."}, "4": {"answer": "Ermäßigung", "erkl": "Ermäßigung = günstigerer Preis für bestimmte Gruppen."}, "5": {"answer": "auch", "erkl": "Zusätzlich zur Gruppenermäßigung → auch."}, "6": {"answer": "Wunsch", "erkl": "Danach folgt eine Bitte → einen Wunsch haben."}, "7": {"answer": "Kulissen", "erkl": "Feste Wendung: hinter den Kulissen."}, "8": {"answer": "weil", "erkl": "Begründung im Nebensatz, Verb am Ende (waren) → weil. „obwohl“ wäre ein Gegensatz."}, "9": {"answer": "dankbar", "erkl": "Feste Wendung: Ich wäre Ihnen dankbar, wenn …"}, "10": {"answer": "damit", "erkl": "Ziel: Sie soll bald antworten, damit sie rechtzeitig bestellen kann."}}}],
+  3: [{"id": "k3-t1", "teil": 1, "title": "Teil 1 · Grammatik: Trainer beim Fußballverein", "instruction": "Lies die E-Mail. Welche Lösung (a, b oder c) passt in die Lücken 1–10?", "text": "Liebe Ana,\n\nstell dir vor, seit einem Monat trainiere ich die Kinder beim FC Unterrödingen! Ich hätte nie gedacht, {1} mir das so viel Spaß macht. Jeden Dienstag und Donnerstag stehe ich mit zwölf Jungen und Mädchen auf dem Platz, {2} zwischen acht und zehn Jahre alt sind.\n\nEigentlich habe ich wenig Zeit, {3} ich arbeite ja auch noch Vollzeit. Aber die Kinder freuen sich jedes Mal so sehr, {4} komme ich gern. Letzten Samstag {5} wir unser erstes Spiel gewonnen – drei zu eins!\n\nDer Verein sucht übrigens noch Leute, die bei den Heimspielen am Kiosk helfen. Wenn du am Wochenende Zeit {6}, könntest du doch mitmachen! Du kennst dich doch {7} Kuchenbacken so gut aus.\n\nWenn ich mehr Geld hätte, {8} ich dem Verein neue Trikots kaufen – die alten sind schon ziemlich kaputt. Vielleicht finden wir ja einen Sponsor. Hast du eine Idee, {9} wir fragen könnten?\n\nMelde dich doch {10} Wochenende!\n\nLiebe Grüße\nSamir", "gaps": {"1": {"answer": "dass", "wrong": ["ob", "wenn"], "erkl": "Ich hätte nie gedacht, dass … – „dass“ leitet den Inhalt des Gedankens ein."}, "2": {"answer": "die", "wrong": ["denen", "deren"], "erkl": "Relativpronomen im Nominativ Plural (die Kinder sind … alt) → die."}, "3": {"answer": "denn", "wrong": ["weil", "deshalb"], "erkl": "Nach „denn“ bleibt das Verb auf Position 2 („ich arbeite“)."}, "4": {"answer": "deshalb", "wrong": ["weil", "obwohl"], "erkl": "Folge mit Verb direkt danach („deshalb komme ich“)."}, "5": {"answer": "haben", "wrong": ["sind", "hatten"], "erkl": "„gewinnen“ bildet das Perfekt mit „haben“."}, "6": {"answer": "hättest", "wrong": ["hätte", "hattest"], "erkl": "Irreale Bedingung mit Konjunktiv II, 2. Person: wenn du Zeit hättest."}, "7": {"answer": "mit", "wrong": ["über", "bei"], "erkl": "sich auskennen mit + Dativ."}, "8": {"answer": "würde", "wrong": ["werde", "wäre"], "erkl": "Wunsch mit Konjunktiv II: würde + Infinitiv (würde … kaufen)."}, "9": {"answer": "wen", "wrong": ["wem", "wer"], "erkl": "fragen + Akkusativ: Wen könnten wir fragen?"}, "10": {"answer": "am", "wrong": ["im", "zum"], "erkl": "Zeitangabe: am Wochenende."}}}, {"id": "k3-t2", "teil": 2, "title": "Teil 2 · Wortschatz: Ich möchte helfen!", "instruction": "Lies die E-Mail und schließe die Lücken 1–10 mit den Wörtern a–o. Jedes Wort passt nur einmal. Fünf Wörter bleiben übrig.", "text": "Sehr geehrte Frau Lorenz,\n\nich habe Ihre Anzeige in der Stadtzeitung gelesen und möchte mich gern {1} engagieren. Seit ich in Rente bin, habe ich viel freie Zeit und suche eine sinnvolle {2}.\n\nFrüher war ich Lehrerin für Mathematik. {3} könnte ich mir gut vorstellen, Schülerinnen und Schülern {4} zu geben. Aber auch ein Besuchsdienst im Seniorenheim würde mich interessieren, {5} ich mich gern mit älteren Menschen unterhalte.\n\nIch habe {6} vormittags Zeit, nachmittags kümmere ich mich um meine Enkelkinder. Könnten Sie mir sagen, wie viele Stunden pro Woche man {7} helfen sollte? Und brauche ich für diese Arbeit eine besondere {8}?\n\nIch würde mich freuen, Sie bald {9} kennenzulernen. Sie erreichen mich {10} unter der Telefonnummer 0741 23456.\n\nMit freundlichen Grüßen\nGisela Hartmann", "words": ["Aufgabe", "Ausbildung", "Bezahlung", "damals", "deshalb", "ehrenamtlich", "jederzeit", "mindestens", "Nachhilfe", "nur", "obwohl", "persönlich", "Spende", "weil", "wovon"], "gaps": {"1": {"answer": "ehrenamtlich", "erkl": "sich ehrenamtlich engagieren = ohne Bezahlung für andere arbeiten."}, "2": {"answer": "Aufgabe", "erkl": "eine sinnvolle Aufgabe suchen."}, "3": {"answer": "deshalb", "erkl": "Folge: Sie war Mathelehrerin, deshalb kann sie sich Nachhilfe gut vorstellen."}, "4": {"answer": "Nachhilfe", "erkl": "jemandem Nachhilfe geben = beim Lernen helfen."}, "5": {"answer": "weil", "erkl": "Begründung im Nebensatz, Verb am Ende (unterhalte)."}, "6": {"answer": "nur", "erkl": "Nur vormittags – nachmittags hat sie keine Zeit."}, "7": {"answer": "mindestens", "erkl": "mindestens = nicht weniger als."}, "8": {"answer": "Ausbildung", "erkl": "Braucht man dafür eine besondere Ausbildung (Qualifikation)?"}, "9": {"answer": "persönlich", "erkl": "jemanden persönlich kennenlernen."}, "10": {"answer": "jederzeit", "erkl": "jederzeit = immer, zu jeder Zeit."}}}],
+  4: [{"id": "k4-t1", "teil": 1, "title": "Teil 1 · Grammatik: Grüße aus dem Schwarzwald", "instruction": "Lies die E-Mail. Welche Lösung (a, b oder c) passt in die Lücken 1–10?", "text": "Liebe Jana,\n\nschöne Grüße aus dem Schwarzwald! Wir sind seit Samstag hier. {1} es fast jeden Tag geregnet hat, sind wir viel gewandert. Die Landschaft ist einfach wunderschön.\n\nWir wohnen in einer kleinen Pension, {2} direkt am Waldrand liegt. Die Besitzerin, {3} wir jeden Morgen beim Frühstück plaudern, gibt uns immer gute Tipps. Gestern sind wir zu einem Wasserfall gewandert, {4} über 60 Meter hoch ist.\n\nDie Pension ist {5} als das Hotel, in dem wir letztes Jahr waren, aber viel gemütlicher. Und das Frühstück ist toll: Es gibt Brot, Käse und Marmelade {6} der Region.\n\nMorgen wollen wir eine Radtour machen, {7} das Wetter besser wird. Hoffentlich müssen wir {8} wieder unsere Regenjacken anziehen!\n\n{9} du auch mal Lust auf Natur hast, kann ich dir die Pension wirklich empfehlen. Ich zeige dir die Fotos, {10} wir wieder zu Hause sind.\n\nViele Grüße\nTom", "gaps": {"1": {"answer": "Obwohl", "wrong": ["Weil", "Deshalb"], "erkl": "Gegensatz: Regen – trotzdem gewandert → obwohl."}, "2": {"answer": "die", "wrong": ["der", "das"], "erkl": "Relativpronomen im Nominativ, „die Pension“ ist feminin → die."}, "3": {"answer": "mit der", "wrong": ["mit die", "mit dem"], "erkl": "plaudern mit + Dativ; „die Besitzerin“ ist feminin → mit der."}, "4": {"answer": "der", "wrong": ["den", "dem"], "erkl": "Relativpronomen im Nominativ, „der Wasserfall“ ist maskulin → der."}, "5": {"answer": "einfacher", "wrong": ["einfach", "am einfachsten"], "erkl": "Vergleich mit „als“ → Komparativ: einfacher als."}, "6": {"answer": "aus", "wrong": ["nach", "bei"], "erkl": "Herkunft: Produkte aus der Region."}, "7": {"answer": "wenn", "wrong": ["ob", "als"], "erkl": "Bedingung: nur dann, wenn das Wetter besser wird."}, "8": {"answer": "nicht", "wrong": ["kein", "keine"], "erkl": "Ein Verb wird verneint (anziehen müssen) → nicht."}, "9": {"answer": "Falls", "wrong": ["Ob", "Wann"], "erkl": "Bedingung: falls = wenn."}, "10": {"answer": "sobald", "wrong": ["seit", "bis"], "erkl": "sobald = direkt wenn (in der Zukunft)."}}}, {"id": "k4-t2", "teil": 2, "title": "Teil 2 · Wortschatz: Anfrage für eine Ferienwohnung", "instruction": "Lies die E-Mail und schließe die Lücken 1–10 mit den Wörtern a–o. Jedes Wort passt nur einmal. Fünf Wörter bleiben übrig.", "text": "Sehr geehrter Herr Brenner,\n\nauf Ihrer Webseite habe ich Ihre Ferienwohnung am Bodensee gesehen. Sie gefällt mir sehr gut, und ich möchte {1} fragen, ob sie vom 3. bis 10. August noch {2} ist.\n\nWir sind eine Familie mit zwei Kindern und einem kleinen Hund. Ist es erlaubt, {3} Hund mitzubringen? Außerdem möchte ich wissen, ob Bettwäsche und Handtücher im {4} enthalten sind.\n\nWir wollen in diesem Urlaub möglichst {5} reisen und kommen deshalb mit der Bahn. Wie weit ist es vom Bahnhof bis zu Ihrer Wohnung? Gibt es in der Nähe eine {6}, oder müssen wir ein Taxi nehmen?\n\nDa wir gern Rad fahren, wäre es {7} toll, wenn wir bei Ihnen Fahrräder ausleihen könnten. In Ihrer Anzeige steht leider nichts {8}.\n\nIch hoffe, dass es mit der {9} klappt. {10} Sie mir bitte auch mitteilen, ob wir eine Anzahlung leisten müssen?\n\nMit freundlichen Grüßen\nPetra Schulz", "words": ["besonders", "Bewertung", "Buchung", "Bushaltestelle", "damals", "darüber", "deshalb", "einen", "frei", "Könnten", "nachhaltig", "obwohl", "Preis", "worüber", "Zelt"], "gaps": {"1": {"answer": "deshalb", "erkl": "Folge: Die Wohnung gefällt ihr, deshalb fragt sie."}, "2": {"answer": "frei", "erkl": "Eine Wohnung ist frei = noch nicht vermietet."}, "3": {"answer": "einen", "erkl": "einen Hund mitbringen (Akkusativ, maskulin)."}, "4": {"answer": "Preis", "erkl": "im Preis enthalten = man muss nicht extra bezahlen."}, "5": {"answer": "nachhaltig", "erkl": "nachhaltig reisen = umweltfreundlich, z. B. mit der Bahn."}, "6": {"answer": "Bushaltestelle", "erkl": "Alternative zum Taxi: der Bus."}, "7": {"answer": "besonders", "erkl": "besonders toll = sehr toll."}, "8": {"answer": "darüber", "erkl": "nichts darüber stehen = keine Information zu diesem Thema."}, "9": {"answer": "Buchung", "erkl": "Es klappt mit der Buchung = die Reservierung funktioniert."}, "10": {"answer": "Könnten", "erkl": "Höfliche Bitte mit Konjunktiv II: Könnten Sie …?"}}}],
+  5: [{"id": "k5-t1", "teil": 1, "title": "Teil 1 · Grammatik: Ein Brief aus Toronto", "instruction": "Lies die E-Mail. Welche Lösung (a, b oder c) passt in die Lücken 1–10?", "text": "Liebe Oma,\n\njetzt wohne ich schon ein halbes Jahr in Toronto! {1} des kalten Winters gefällt es mir hier sehr gut. Die Menschen sind freundlich, und in der Firma, {2} ich als Ingenieur arbeite, habe ich schon viele nette Kollegen.\n\nAm Anfang war alles neu: Ich musste ein Bankkonto eröffnen, eine Wohnung suchen und viele Formulare {3}. {4} der ersten Wochen habe ich bei einem Kollegen gewohnt. Jetzt habe ich eine eigene Wohnung, {5} Fenster auf einen Park zeigen.\n\nManchmal habe ich Heimweh. Dann denke ich an unsere Sonntage bei dir. Und {6} denke ich dabei am meisten? An deinen Apfelkuchen natürlich! {7} du mir das Rezept vielleicht aufschreiben? Dann backe ich ihn hier für meine Kollegen.\n\nIch freue mich schon sehr {8} Weihnachten, {9} dann komme ich euch für zwei Wochen besuchen. {10} meines neuen Jobs kann ich leider nicht länger bleiben.\n\nGanz liebe Grüße\ndein Daniel", "gaps": {"1": {"answer": "Trotz", "wrong": ["Wegen", "Während"], "erkl": "Gegensatz: Der Winter ist kalt, aber es gefällt ihm → trotz + Genitiv."}, "2": {"answer": "in der", "wrong": ["in die", "in dem"], "erkl": "Wo? → in + Dativ; „die Firma“ ist feminin → in der."}, "3": {"answer": "ausfüllen", "wrong": ["ausgefüllt", "auszufüllen"], "erkl": "Nach Modalverb (musste) steht der Infinitiv ohne zu."}, "4": {"answer": "Während", "wrong": ["Trotz", "Wegen"], "erkl": "Zeitraum: während der ersten Wochen."}, "5": {"answer": "deren", "wrong": ["dessen", "die"], "erkl": "Die Fenster gehören zur Wohnung (feminin) → deren Fenster."}, "6": {"answer": "woran", "wrong": ["an wen", "worüber"], "erkl": "denken an + Sache → woran. Die Antwort ist eine Sache (der Apfelkuchen)."}, "7": {"answer": "Könntest", "wrong": ["Konntest", "Könnten"], "erkl": "Höfliche Bitte im Konjunktiv II, 2. Person Singular: Könntest du …?"}, "8": {"answer": "auf", "wrong": ["an", "für"], "erkl": "sich freuen auf + etwas in der Zukunft."}, "9": {"answer": "denn", "wrong": ["weil", "deshalb"], "erkl": "Begründung mit Verb auf Position 2 („dann komme ich“) → denn."}, "10": {"answer": "Wegen", "wrong": ["Trotz", "Während"], "erkl": "Grund: der neue Job → wegen + Genitiv."}}}, {"id": "k5-t2", "teil": 2, "title": "Teil 2 · Wortschatz: Beratung zum Auswandern", "instruction": "Lies die E-Mail und schließe die Lücken 1–10 mit den Wörtern a–o. Jedes Wort passt nur einmal. Fünf Wörter bleiben übrig.", "text": "Sehr geehrte Damen und Herren,\n\nmein Mann und ich überlegen, nach Neuseeland {1}. Mein Mann ist Elektriker, ich bin Krankenpflegerin. Wir haben gehört, dass Sie Menschen {2}, die im Ausland leben und arbeiten möchten.\n\nZuerst würden wir gern wissen, welche {3} wir für ein Arbeitsvisum brauchen. Müssen unsere Berufsabschlüsse in Neuseeland {4} werden? Und wie lange dauert das ungefähr?\n\nWir haben zwei Kinder (6 und 9 Jahre). {5} ist uns wichtig, dass sie dort gut in die Schule gehen können. Gibt es Schulen, an {6} die Kinder zuerst Englisch lernen können?\n\nNatürlich ist so ein Schritt eine große {7}. Deshalb möchten wir uns {8} gut informieren. Wir wären Ihnen sehr {9}, wenn wir einen Termin für ein Beratungsgespräch bekommen könnten – am liebsten an einem Nachmittag, {10} wir vormittags beide arbeiten.\n\nMit freundlichen Grüßen\nMaria und Stefan Kovač", "words": ["anerkannt", "Außerdem", "auszuwandern", "beraten", "da", "dankbar", "denen", "deren", "Entscheidung", "Gehalt", "Heimweh", "obwohl", "Unterlagen", "vorher", "wegen"], "gaps": {"1": {"answer": "auszuwandern", "erkl": "überlegen, etwas zu tun → Infinitiv mit zu: auszuwandern."}, "2": {"answer": "beraten", "erkl": "Menschen beraten = Informationen und Tipps geben."}, "3": {"answer": "Unterlagen", "erkl": "Für ein Visum braucht man Unterlagen (Dokumente)."}, "4": {"answer": "anerkannt", "erkl": "Ein Abschluss wird anerkannt = er gilt auch im neuen Land."}, "5": {"answer": "Außerdem", "erkl": "Ein weiterer wichtiger Punkt kommt dazu."}, "6": {"answer": "denen", "erkl": "an + Dativ Plural (die Schulen) → an denen."}, "7": {"answer": "Entscheidung", "erkl": "eine große Entscheidung = ein wichtiger Schritt im Leben."}, "8": {"answer": "vorher", "erkl": "Vor dem Umzug → vorher informieren."}, "9": {"answer": "dankbar", "erkl": "Feste Wendung: Wir wären Ihnen dankbar, wenn …"}, "10": {"answer": "da", "erkl": "da = weil (Begründung, Verb am Ende)."}}}],
+  6: [{"id": "k6-t1", "teil": 1, "title": "Teil 1 · Grammatik: Bald ist Weihnachten", "instruction": "Lies die E-Mail. Welche Lösung (a, b oder c) passt in die Lücken 1–10?", "text": "Liebe Sophie,\n\nbei uns ist es schon richtig weihnachtlich! Gestern haben wir Plätzchen gebacken, und die ganze Wohnung riecht {1} Zimt und Vanille. {2} wir den Baum kaufen, müssen wir aber noch den Keller aufräumen – dort steht nämlich der Weihnachtsschmuck.\n\nFür meine Mutter habe ich einen Schal gestrickt. Ich habe {3} schon meiner Schwester gezeigt, und sie findet ihn wunderschön. {4} ich die Geschenke einpacke, höre ich nebenbei Weihnachtsmusik.\n\nAm Heiligabend kommen meine Großeltern zu uns. Oma bringt wie jedes Jahr ihren berühmten Kartoffelsalat mit, {5} Rezept niemand außer ihr kennt. Ich finde ja, Weihnachten ist das {6} Fest des Jahres.\n\nWas machst du an den Feiertagen? Hast du Lust, uns zwischen Weihnachten und Silvester {7}? Dann könnten wir zusammen auf den Weihnachtsmarkt gehen, {8} er am 23. Dezember schließt.\n\nIch habe übrigens auch ein kleines Geschenk für dich. Ich gebe {9}, wenn du kommst. Schreib mir bald, {10} ich weiß, ob du kommst!\n\nLiebe Grüße\nHanna", "gaps": {"1": {"answer": "nach", "wrong": ["von", "mit"], "erkl": "riechen nach + Dativ."}, "2": {"answer": "Bevor", "wrong": ["Während", "Nachdem"], "erkl": "Zuerst den Keller aufräumen, dann den Baum kaufen → bevor."}, "3": {"answer": "ihn", "wrong": ["ihm", "er"], "erkl": "„den Schal“ ist Akkusativ, maskulin → ihn."}, "4": {"answer": "Während", "wrong": ["Bevor", "Nachdem"], "erkl": "Zwei Dinge gleichzeitig (nebenbei) → während."}, "5": {"answer": "dessen", "wrong": ["deren", "den"], "erkl": "Das Rezept gehört zum Kartoffelsalat (maskulin) → dessen Rezept."}, "6": {"answer": "schönste", "wrong": ["schönsten", "schöner"], "erkl": "Superlativ nach „das“ im Nominativ → das schönste Fest."}, "7": {"answer": "zu besuchen", "wrong": ["besuchen", "besuchen zu"], "erkl": "Lust haben, etwas zu tun → zu + Infinitiv."}, "8": {"answer": "bevor", "wrong": ["während", "nachdem"], "erkl": "Der Markt schließt am 23. – ihr müsst vorher hingehen → bevor."}, "9": {"answer": "es dir", "wrong": ["dir es", "es dich"], "erkl": "Zwei Pronomen: erst Akkusativ (es), dann Dativ (dir)."}, "10": {"answer": "damit", "wrong": ["dass", "um"], "erkl": "Ziel: Schreib mir, damit ich weiß, …"}}}, {"id": "k6-t2", "teil": 2, "title": "Teil 2 · Wortschatz: Die Weihnachtsfeier der Firma", "instruction": "Lies die E-Mail und schließe die Lücken 1–10 mit den Wörtern a–o. Jedes Wort passt nur einmal. Fünf Wörter bleiben übrig.", "text": "Sehr geehrte Frau Engel,\n\nich organisiere in diesem Jahr die {1} unserer Firma und möchte gern in Ihrem Restaurant feiern. Wir sind {2} 25 Personen und würden gern am Freitag, dem 18. Dezember, ab 19 Uhr kommen.\n\nHaben Sie an diesem Abend noch einen {3} Raum für uns frei? Wir möchten ein festliches Menü mit drei Gängen bestellen. Einige Kolleginnen und Kollegen essen kein Fleisch. Könnten Sie {4} auch ein vegetarisches Gericht anbieten?\n\n{5} würde ich gern wissen, ob wir den Raum selbst {6} dürfen. Wir haben nämlich Kerzen, Tannenzweige und kleine Sterne, die unsere Auszubildenden {7} haben.\n\nDie Getränke bezahlt die Firma, das Essen bezahlt jede Person {8}. Ist das für Sie in {9}?\n\nIch freue mich auf Ihr Angebot. Bitte schicken Sie es mir {10} bis zum 20. November.\n\nMit freundlichen Grüßen\nMarkus Lehmann", "words": ["Außerdem", "deshalb", "Duft", "eigenen", "gebastelt", "Geschenk", "kitschig", "möglichst", "obwohl", "Ordnung", "schmücken", "selbst", "trotzdem", "ungefähr", "Weihnachtsfeier"], "gaps": {"1": {"answer": "Weihnachtsfeier", "erkl": "Eine Firma feiert vor Weihnachten eine Weihnachtsfeier."}, "2": {"answer": "ungefähr", "erkl": "ungefähr = etwa, nicht ganz genau."}, "3": {"answer": "eigenen", "erkl": "einen eigenen Raum = nur für die Gruppe."}, "4": {"answer": "deshalb", "erkl": "Folge: Einige essen kein Fleisch, deshalb ein vegetarisches Gericht."}, "5": {"answer": "Außerdem", "erkl": "Eine weitere Frage kommt dazu."}, "6": {"answer": "schmücken", "erkl": "einen Raum schmücken = dekorieren."}, "7": {"answer": "gebastelt", "erkl": "Sterne basteln = mit den Händen selbst machen."}, "8": {"answer": "selbst", "erkl": "Jede Person bezahlt selbst = für sich."}, "9": {"answer": "Ordnung", "erkl": "Feste Wendung: Ist das in Ordnung? = Ist das okay?"}, "10": {"answer": "möglichst", "erkl": "möglichst bis … = wenn es geht, bis …"}}}]
+};
+
+function sbTasks(k){ return SPRACHBAUSTEINE_DATA[k == null ? state.chapter : k] || []; }
+function openSprachbausteine(){
+  currentExerciseMode = "sprachbausteine";
+  renderSbList();
+  showScreen("sprachbausteine");
+}
+function renderSbList(){
+  document.getElementById("sbListBlock").style.display = "block";
+  document.getElementById("sbTaskBlock").style.display = "none";
+  const wrap = document.getElementById("sbListWrap");
+  wrap.innerHTML = "";
+  const tasks = sbTasks();
+  document.getElementById("sbListEmpty").style.display = tasks.length ? "none" : "block";
+  const c = ampelCh();
+  tasks.forEach(t=>{
+    const card = document.createElement("div");
+    card.className = "track-card";
+    const done = c.sb && c.sb[t.id];
+    card.innerHTML = '<p class="tracktitle">🧱 ' + t.title + (done ? ' ✓' : '') + '</p>' +
+      '<p class="tracktask">' + (t.teil === 1 ? "10 Lücken · je drei Lösungen (a, b, c)" : "10 Lücken · 15 Wörter (a–o), jedes Wort nur einmal") + '</p>';
+    card.addEventListener("click", ()=> startSbTask(t));
+    wrap.appendChild(card);
+  });
+}
+function sbEscape(s){ const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+function startSbTask(t){
+  state.sbTask = t;
+  document.getElementById("sbListBlock").style.display = "none";
+  document.getElementById("sbTaskBlock").style.display = "block";
+  document.getElementById("sbTitle").textContent = "🧱 " + t.title;
+  document.getElementById("sbInstruction").textContent = t.instruction;
+  document.getElementById("sbResult").style.display = "none";
+  document.getElementById("sbResult").innerHTML = "";
+  const btn = document.getElementById("btnSbCheck");
+  btn.style.display = ""; btn.disabled = false;
+  document.getElementById("btnSbRetry").style.display = "none";
+  // Wortliste (nur Teil 2)
+  const bank = document.getElementById("sbWordbank");
+  const letters = "abcdefghijklmno";
+  if(t.teil === 2){
+    bank.style.display = "flex";
+    bank.innerHTML = t.words.map((w,i)=> '<span class="sb-word" data-word="' + sbEscape(w) + '"><b>' + letters[i] + '</b> ' + sbEscape(w) + '</span>').join("");
+  } else {
+    bank.style.display = "none";
+    bank.innerHTML = "";
+  }
+  // Text mit Auswahlfeldern
+  const html = t.text.split("\n\n").map(par=>{
+    const safe = sbEscape(par).replace(/\n/g, "<br>");
+    return "<p>" + safe.replace(/\{(\d+)\}/g, (m, n)=>{
+      const gap = t.gaps[n];
+      let opts;
+      if(t.teil === 1){
+        const all = shuffle([gap.answer].concat(gap.wrong));
+        opts = all.map((o,i)=> '<option value="' + sbEscape(o) + '">' + "abc"[i] + ") " + sbEscape(o) + '</option>').join("");
+      } else {
+        opts = t.words.map((w,i)=> '<option value="' + sbEscape(w) + '">' + letters[i] + ") " + sbEscape(w) + '</option>').join("");
+      }
+      return '<span class="sb-gapwrap"><select class="sb-gap" data-gap="' + n + '" aria-label="Lücke ' + n + '"><option value="">(' + n + ') …</option>' + opts + '</select></span>';
+    }) + "</p>";
+  }).join("");
+  const textEl = document.getElementById("sbText");
+  textEl.innerHTML = html;
+  textEl.querySelectorAll("select.sb-gap").forEach(sel=> sel.addEventListener("change", sbUpdateWordbank));
+  sbUpdateWordbank();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+// Teil 2: schon benutzte Wörter in der Wortliste durchstreichen
+function sbUpdateWordbank(){
+  const t = state.sbTask;
+  if(!t || t.teil !== 2) return;
+  const used = Array.from(document.querySelectorAll("#sbText select.sb-gap")).map(s=>s.value).filter(Boolean);
+  document.querySelectorAll("#sbWordbank .sb-word").forEach(el=>{
+    el.classList.toggle("sb-word-used", used.includes(el.getAttribute("data-word")));
+  });
+}
+function checkSbTask(){
+  const t = state.sbTask;
+  const sels = Array.from(document.querySelectorAll("#sbText select.sb-gap"));
+  const offen = sels.filter(s=>!s.value).length;
+  const res = document.getElementById("sbResult");
+  if(offen > 0 && !document.getElementById("btnSbCheck").dataset.confirm){
+    res.style.display = "block";
+    res.innerHTML = '<p class="hint-text" style="text-align:left;margin:0;">Es sind noch ' + offen + ' Lücke(n) offen. Tippe noch einmal auf „Auswerten“, wenn du trotzdem auswerten möchtest.</p>';
+    document.getElementById("btnSbCheck").dataset.confirm = "1";
+    return;
+  }
+  delete document.getElementById("btnSbCheck").dataset.confirm;
+  let richtig = 0;
+  const fehler = [];
+  sels.forEach(sel=>{
+    const n = sel.getAttribute("data-gap");
+    const gap = t.gaps[n];
+    const wrap = sel.parentNode;
+    const old = wrap.querySelector(".sb-solution");
+    if(old) old.remove();
+    sel.disabled = true;
+    if(sel.value === gap.answer){
+      richtig++;
+      sel.classList.add("sb-ok");
+    } else {
+      sel.classList.add("sb-bad");
+      const sol = document.createElement("span");
+      sol.className = "sb-solution";
+      sol.textContent = "→ " + gap.answer;
+      wrap.appendChild(sol);
+      fehler.push({n:n, gap:gap, gewaehlt:sel.value});
+    }
+  });
+  const emoji = richtig >= 8 ? "🎉" : richtig >= 6 ? "👍" : "💪";
+  let html = '<p style="margin:0 0 6px;font-weight:700;color:var(--green-900);">' + emoji + " " + richtig + " von 10 richtig</p>";
+  html += '<p class="hint-text" style="text-align:left;margin:0 0 8px;">In der Prüfung zählt jede richtige Lücke 1,5 Punkte (Teil 1 und 2 zusammen max. 30 Punkte).</p>';
+  if(fehler.length){
+    html += '<p style="margin:6px 0 4px;font-weight:600;">Erklärungen zu deinen Fehlern:</p><ul class="sb-erkl">';
+    fehler.forEach(f=>{
+      html += "<li><b>(" + f.n + ") " + sbEscape(f.gap.answer) + "</b>" + (f.gewaehlt ? " – nicht „" + sbEscape(f.gewaehlt) + "“" : "") + ": " + sbEscape(f.gap.erkl) + "</li>";
+    });
+    html += "</ul>";
+  } else {
+    html += '<p style="margin:0;">Alles richtig – stark!</p>';
+  }
+  res.innerHTML = html;
+  res.style.display = "block";
+  document.getElementById("btnSbCheck").style.display = "none";
+  document.getElementById("btnSbRetry").style.display = "";
+  ampelMark("sb", t.id);
+  try{ renderAmpel(); }catch(e){}
+}
+document.getElementById("btnSbCheck").addEventListener("click", checkSbTask);
+document.getElementById("btnSbRetry").addEventListener("click", ()=> startSbTask(state.sbTask));
+document.getElementById("btnSbBackList").addEventListener("click", renderSbList);
+
 /* ---------------- REDEWENDUNGEN-TRAINING ----------------
    Pilot für Kapitel 1: kurze Alltagssituationen, in denen es vor allem auf
    die richtige Höflichkeitsform/den passenden Gesprächseinstieg ankommt
@@ -4072,6 +4268,7 @@ const EXERCISE_LABEL_BY_MODE = {
   grammar: "Grammatik",
   hoeren: "Hören",
   lesen: "Lesen",
+  sprachbausteine: "Sprachbausteine",
   wordlist: "Meine Wortliste"
 };
 let currentExerciseMode = null;
@@ -4529,6 +4726,18 @@ function sendRedewendungenBeacon(total){
    ein "NEU"-Badge (Speicherung pro Gerät im localStorage, keine Übertragung). */
 const NEWS = [
   {
+    id: "2026-10-sprechen-telc",
+    date: "5. Oktober 2026",
+    title: "Sprechen: Übungen für die Prüfung telc Deutsch B1",
+    text: "In der Sprechtraining-App gibt es jetzt Übungen im Format telc Deutsch B1: Teil 1 „Einander kennenlernen“, Teil 2 „Über ein Thema sprechen“ (zwei Meinungen, dann Diskussion) und Teil 3 „Gemeinsam etwas planen“ – passend zu Kapitel 1 und 2. Ihr findet sie ganz oben in der Auswahl."
+  },
+  {
+    id: "2026-10-sprachbausteine",
+    date: "5. Oktober 2026",
+    title: "Neu: Sprachbausteine wie in der Prüfung",
+    text: "Unser Kurs endet mit der Prüfung telc Deutsch B1. Dort gibt es den Teil „Sprachbausteine“: Lückentexte zu Grammatik und Wortschatz. Ab jetzt findet ihr im Menü die neue Kachel „Sprachbausteine“ – für jedes Kapitel mit je zwei Texten. Erst alle Lücken füllen, dann auswerten: Danach seht ihr zu jedem Fehler eine kurze Erklärung."
+  },
+  {
     id: "2026-10-kapitel-2",
     date: "3. Oktober 2026",
     title: "Kapitel 2 „Vorhang auf!“ ist jetzt aktuell",
@@ -4753,6 +4962,7 @@ document.querySelectorAll(".menu-item[data-go]").forEach(item=>{
     if(mode === "neuigkeiten"){ openNews(); return; }
     if(mode === "wissen"){ openWissen(); return; }
     if(mode === "kapiteltest"){ openKapiteltest(); return; }
+    if(mode === "sprachbausteine"){ openSprachbausteine(); return; }
     if(mode === "redewendungen"){ currentExerciseMode = "redewendungen"; openRedewendungen(); return; }
     openSectionPicker(mode);
   });
@@ -4804,7 +5014,8 @@ function openSchreibtraining(){
    Öffnet die separate Sprechtraining-App (sprechtraining.jurtzik-lernapps.de)
    in einem neuen Tab und gibt Name sowie Kurs direkt mit (siehe Deep-Linking
    in deren app.js). Die TN wählen dort selbst zwischen den verfügbaren
-   Sprech-Themen (Teil 2: Bildbeschreibung, Teil 3: Gemeinsam planen). */
+   Sprech-Themen. Seit 05.10.2026 stehen dort oben die Übungen im Format
+   telc Deutsch B1 (Teil 1–3, kapitelweise freigeschaltet in telc-b1.js). */
 const SPRECHTRAINING_BASE_URL = "https://sprechtraining.jurtzik-lernapps.de/";
 const SPRECHTRAINING_KURS = "B1 Oberndorf (KL T. Jurtzik)";
 function openSprechtraining(){
@@ -6179,6 +6390,11 @@ function ampelCompute(kArg){
   const lDone = lTracks.filter(t => c.lesen && c.lesen[t.id]).length;
   out.lesen = {status: ampelStatus(lDone, lTracks.length, false), detail: lDone + "/" + lTracks.length};
 
+  // Sprachbausteine (telc B1): ein Teil gilt als erledigt, sobald er einmal ausgewertet wurde
+  const sbT = (SPRACHBAUSTEINE_DATA[k] || []);
+  const sbDone = sbT.filter(t => c.sb && c.sb[t.id]).length;
+  out.sprachbausteine = {status: ampelStatus(sbDone, sbT.length, false), detail: sbDone + "/" + sbT.length};
+
   // Externe Apps
   ["schreiben","sprechen","lerntagebuch"].forEach(a=>{
     out[a] = {status: c[a] === "done" ? "gruen" : c[a] === "open" ? "gelb" : "rot", detail: ""};
@@ -6192,6 +6408,7 @@ const AMPEL_AREAS = [
   {key:"grammatik",    label:"Grammatik",    tile:"grammar"},
   {key:"hoeren",       label:"Hören",        tile:"hoeren"},
   {key:"lesen",        label:"Lesen",        tile:"lesen"},
+  {key:"sprachbausteine", label:"Sprachbausteine", tile:"sprachbausteine"},
   {key:"schreiben",    label:"Schreiben",    tile:"schreiben",    manual:true},
   {key:"sprechen",     label:"Sprechen",     tile:"sprechen",     manual:true},
   {key:"lerntagebuch", label:"Lerntagebuch", tile:"lerntagebuch", manual:true}
