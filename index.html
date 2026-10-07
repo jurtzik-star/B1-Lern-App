@@ -509,6 +509,31 @@
         <h3>Kapiteltest</h3>
         <p>Teste am Ende des Kapitels dein Können in Hören, Wortschatz, Lesen, Grammatik und Schreiben – mit direkter Rückmeldung.</p>
       </div>
+      <div class="menu-item" data-go="erinnerung" id="menuErinnerung" style="grid-column:1/-1;display:none;">
+        <span class="emoji">🔔</span>
+        <h3>Erinnerung per E-Mail</h3>
+        <p id="erinnerungTileText">Abends eine kurze Mail, wenn du an dem Tag noch nicht geübt hast.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ERINNERUNG PER E-MAIL -->
+  <section id="screen-erinnerung" class="screen">
+    <div class="card">
+      <div class="topline" style="margin-bottom:0;">
+        <p style="margin:0;">🔔 Erinnerung per E-Mail</p>
+        <button class="btn-ghost" data-back="menu" style="font-size:0.82rem;">← Zurück zum Menü</button>
+      </div>
+    </div>
+    <div class="card">
+      <p style="margin-top:0;">Möchtest du eine kurze Erinnerung per E-Mail bekommen?</p>
+      <p class="hint-text" style="text-align:left;">Die Mail kommt nur <strong>am Abend</strong> und nur an Tagen, an denen du die Lern-App noch nicht genutzt hast. Sie geht an die E-Mail-Adresse, die du im Kurs angegeben hast. Du kannst deine Wahl hier jederzeit ändern.</p>
+      <p id="erinnerungStatus" style="font-weight:700;color:var(--green-900);"></p>
+      <div class="row-btns" style="flex-direction:column;align-items:stretch;gap:8px;">
+        <button class="btn-primary" id="btnErinnerungJa">✅ Ja, bitte abends erinnern</button>
+        <button class="btn-secondary" id="btnErinnerungNein">🚫 Nein, keine Erinnerungen</button>
+      </div>
+      <p class="hint-text" id="erinnerungMsg" style="text-align:left;"></p>
     </div>
   </section>
 
@@ -4753,6 +4778,12 @@ function sendRedewendungenBeacon(total){
    ein "NEU"-Badge (Speicherung pro Gerät im localStorage, keine Übertragung). */
 const NEWS = [
   {
+    id: "2026-10-erinnerung-mail",
+    date: "7. Oktober 2026",
+    title: "Neu: Erinnerung per E-Mail – du entscheidest",
+    text: "Ganz unten im Menü gibt es die Kachel „Erinnerung per E-Mail“. Dort wählst du selbst, ob du abends eine kurze Mail bekommst, wenn du an dem Tag noch nicht mit der App geübt hast. Ohne deine Zustimmung bekommst du keine Erinnerungen mehr. Du kannst deine Wahl jederzeit ändern."
+  },
+  {
     id: "2026-10-gut-zu-wissen-goethe",
     date: "7. Oktober 2026",
     title: "Gut zu wissen: Ein Gedicht von Goethe",
@@ -5178,6 +5209,7 @@ document.querySelectorAll(".menu-item[data-go]").forEach(item=>{
     if(mode === "lerntagebuch"){ openLerntagebuch(); return; }
     if(mode === "neuigkeiten"){ openNews(); return; }
     if(mode === "wissen"){ openWissen(); return; }
+    if(mode === "erinnerung"){ openErinnerung(); return; }
     if(mode === "kapiteltest"){ openKapiteltest(); return; }
     if(mode === "sprachbausteine"){ openSprachbausteine(); return; }
     if(mode === "redewendungen"){ currentExerciseMode = "redewendungen"; openRedewendungen(); return; }
@@ -6420,6 +6452,65 @@ setInterval(()=>{
 function lernzeitMinuten(k){
   try{ lernzeitData = JSON.parse(localStorage.getItem(LERNZEIT_STORAGE_KEY) || "{}") || lernzeitData; }catch(e){}
   return Math.floor((lernzeitData[String(k == null ? state.chapter : k)] || 0) / 60);
+}
+
+/* ---------------- ERINNERUNG PER E-MAIL (Wahl durch die TN) ----------------
+   TN wählen selbst, ob sie abends eine Erinnerungsmail bekommen (Opt-in).
+   Die Wahl geht an ein eigenes kleines Google-Formular (Name + "ja"/"nein"),
+   dessen Antworten im Sheet "Antworten B1-Lern-App" im Tab "Erinnerung"
+   landen. Das Apps Script (Unterlagen/sheet-script-erinnerung.gs) schickt
+   nur an Namen, deren LETZTE Wahl dort "ja" ist. Solange url leer ist,
+   bleibt die Kachel ausgeblendet. */
+const ERINNERUNG_FORM = {
+  url: "https://docs.google.com/forms/d/e/1FAIpQLSfKyM0yXwdeLQnNiANx5mndhlFovRLf_N-Dt7UtisRtlo4JBw/formResponse",
+  entryName: "entry.999323305",   // Feld "Name"
+  entryWahl: "entry.1253149059"   // Feld "Erinnerung" (ja/nein)
+};
+const ERINNERUNG_KEY = STORAGE_KEY + "_erinnerung_v1";
+function erinnerungLokal(){
+  try{
+    const d = JSON.parse(localStorage.getItem(ERINNERUNG_KEY) || "null");
+    if(d && state.name && d.name === state.name.trim().toLowerCase()) return d.wahl;
+  }catch(e){}
+  return null;
+}
+function renderErinnerung(){
+  const wahl = erinnerungLokal();
+  const txt = wahl === "ja" ? "Aktuell: Du bekommst abends eine Erinnerung."
+            : wahl === "nein" ? "Aktuell: Du bekommst keine Erinnerungen."
+            : "Du hast noch nichts ausgewählt – ohne deine Zustimmung bekommst du keine Mails.";
+  const st = document.getElementById("erinnerungStatus");
+  if(st) st.textContent = txt;
+  const tile = document.getElementById("erinnerungTileText");
+  if(tile) tile.textContent = wahl === "ja" ? "Eingeschaltet – abends eine kurze Mail, wenn du noch nicht geübt hast."
+                         : wahl === "nein" ? "Ausgeschaltet. Hier kannst du es jederzeit ändern."
+                         : "Abends eine kurze Mail, wenn du an dem Tag noch nicht geübt hast.";
+}
+function openErinnerung(){
+  document.getElementById("erinnerungMsg").textContent = "";
+  renderErinnerung();
+  showScreen("erinnerung");
+}
+function setErinnerung(wahl){
+  if(!ERINNERUNG_FORM.url || !state.name) return;
+  const params = new URLSearchParams();
+  params.append(ERINNERUNG_FORM.entryName, state.name);
+  params.append(ERINNERUNG_FORM.entryWahl, wahl);
+  try{
+    if(navigator.sendBeacon) navigator.sendBeacon(ERINNERUNG_FORM.url, params);
+    else fetch(ERINNERUNG_FORM.url, {method:"POST", mode:"no-cors", body: params, keepalive:true});
+  }catch(e){}
+  try{ localStorage.setItem(ERINNERUNG_KEY, JSON.stringify({name: state.name.trim().toLowerCase(), wahl, stand: Date.now()})); }catch(e){}
+  renderErinnerung();
+  document.getElementById("erinnerungMsg").textContent = wahl === "ja"
+    ? "Gespeichert! Ab heute Abend bekommst du eine Erinnerung, wenn du noch nicht geübt hast."
+    : "Gespeichert! Du bekommst ab sofort keine Erinnerungsmails mehr.";
+}
+document.getElementById("btnErinnerungJa").addEventListener("click", ()=>setErinnerung("ja"));
+document.getElementById("btnErinnerungNein").addEventListener("click", ()=>setErinnerung("nein"));
+if(ERINNERUNG_FORM.url){
+  document.getElementById("menuErinnerung").style.display = "";
+  renderErinnerung();
 }
 
 /* ---------------- ANWESENHEIT IM UNTERRICHT (aus Thomas' Google Formular) ----------------
