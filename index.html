@@ -132,6 +132,33 @@
   .wissen-beispiele li{font-style:italic;color:var(--green-900);font-size:0.88rem;margin-bottom:5px;}
   .wissen-beispiele li:last-child{margin-bottom:0;}
   .wissen-nav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:18px;flex-wrap:wrap;}
+  .gd-step{border-top:1px solid var(--green-100);padding:16px 0 4px;}
+  .gd-step h4{margin:0 0 6px;font-size:1rem;color:var(--green-900);}
+  .gd-step .gd-auftrag{font-size:0.9rem;color:#3d4a41;margin:0 0 10px;line-height:1.5;}
+  .gd-gedicht{background:#fbf8f1;border-left:4px solid #b08d57;border-radius:8px;padding:14px 18px;margin:8px 0 6px;font-family:Georgia,'Times New Roman',serif;font-size:1.02rem;line-height:1.65;color:#3b3226;}
+  .gd-gedicht .gd-quelle{font-family:inherit;font-size:0.8rem;color:#7c6a4f;margin-top:8px;font-style:italic;}
+  .gd-pair{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 0;border-bottom:1px dashed var(--green-100);}
+  .gd-pair .gd-alt{font-family:Georgia,serif;font-weight:700;min-width:90px;color:#3b3226;}
+  .gd-pair select{flex:1;min-width:160px;padding:8px;border-radius:8px;border:2px solid var(--green-100);font-size:0.92rem;background:#fff;}
+  .gd-pair select.ok{border-color:#3f9a64;background:#eef8f1;}
+  .gd-pair select.bad{border-color:#d0574b;background:#fdf0ee;}
+  .gd-tipp{flex-basis:100%;font-size:0.82rem;color:#8a5a20;background:#fff7e8;border-radius:6px;padding:6px 10px;display:none;}
+  .gd-pool,.gd-answer{display:flex;flex-direction:column;gap:6px;min-height:44px;}
+  .gd-answer{background:var(--green-50);border:2px dashed var(--green-500);border-radius:10px;padding:8px;margin:8px 0;}
+  .gd-line{text-align:left;padding:9px 12px;border-radius:8px;border:2px solid var(--green-100);background:#fff;font-size:0.92rem;cursor:pointer;color:#2c3a31;}
+  .gd-answer .gd-line{border-color:var(--green-500);}
+  .gd-answer .gd-line .gd-nr{font-weight:800;color:var(--green-700);margin-right:6px;}
+  .gd-msg{font-size:0.88rem;margin:6px 0;font-weight:600;}
+  .gd-msg.ok{color:#2f7a4c;} .gd-msg.bad{color:#b2453a;}
+  .gd-vergleich{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+  .gd-vergleich > div{border-radius:8px;padding:10px 12px;font-size:0.88rem;line-height:1.55;}
+  .gd-vergleich .gd-v-alt{background:#fbf8f1;font-family:Georgia,serif;color:#3b3226;}
+  .gd-vergleich .gd-v-neu{background:var(--green-50);color:#2c3a31;}
+  .gd-vergleich b{display:block;font-family:system-ui,sans-serif;font-size:0.75rem;letter-spacing:.04em;text-transform:uppercase;color:#7c8b81;margin-bottom:4px;}
+  .gd-step textarea{width:100%;box-sizing:border-box;min-height:80px;border-radius:8px;border:2px solid var(--green-100);padding:10px;font-size:0.92rem;font-family:inherit;}
+  .gd-muster{display:none;background:var(--green-50);border-radius:8px;padding:10px 14px;font-size:0.9rem;color:#2c3a31;line-height:1.55;margin-top:8px;}
+  .gd-btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+  @media (max-width:520px){ .gd-vergleich{grid-template-columns:1fr;} }
   .wissen-counter{font-size:0.78rem;color:#7c8b81;font-weight:700;letter-spacing:.02em;}
   .pill{
     display:inline-block;background:var(--green-100);color:var(--green-900);
@@ -405,7 +432,7 @@
       <div class="menu-item" data-go="wissen">
         <span class="emoji">💡</span>
         <h3>Gut zu wissen</h3>
-        <p>Feine Unterschiede zwischen ähnlichen Wörtern erklärt.</p>
+        <p>Wissenswertes rund um die deutsche Sprache – mit kleinen Übungen.</p>
         <span class="news-badge" id="wissenBadge" style="display:none;">NEU</span>
       </div>
       <div class="menu-item" data-go="flashcards">
@@ -4726,6 +4753,12 @@ function sendRedewendungenBeacon(total){
    ein "NEU"-Badge (Speicherung pro Gerät im localStorage, keine Übertragung). */
 const NEWS = [
   {
+    id: "2026-10-gut-zu-wissen-goethe",
+    date: "7. Oktober 2026",
+    title: "Gut zu wissen: Ein Gedicht von Goethe",
+    text: "In der Kachel „Gut zu wissen“ gibt es jetzt ein neues Thema mit Übung: Wie klang Deutsch vor über 200 Jahren? Ihr lest ein berühmtes Gedicht von Goethe, findet heraus, was die alten Wörter heute bedeuten, bringt eine moderne Fassung in die richtige Reihenfolge und vergleicht beide."
+  },
+  {
     id: "2026-10-sprechen-telc",
     date: "5. Oktober 2026",
     title: "Sprechen: Übungen für die Prüfung telc Deutsch B1",
@@ -4834,6 +4867,7 @@ updateNewsBadge();
    "gelesen/ungelesen"-Badge nötig wie bei Neuigkeiten - er soll die TN
    einfach regelmäßig ans Nachschauen erinnern). */
 const HAUSAUFGABEN = [
+  { date: "6. Oktober 2026", text: "Kursbuch: Seite 26, Aufgabe 1a–d, und Seiten 30–32, Übungen bearbeiten. Lern-App: Neues Thema in „Gut zu wissen“ – das Goethe-Gedicht aus dem Unterricht als Übung (Button unten). Und nicht vergessen: Eintrag ins Lerntagebuch!", wissen: "2026-10-goethe-nachtlied", wissenLabel: "Zur Goethe-Übung in „Gut zu wissen“" },
   { date: "3. Oktober 2026", text: "Kursbuch: Bitte die restlichen Übungsaufgaben in Kapitel 1 bearbeiten und Seite 24–25 (Theater) für Dienstag vorbereiten. Lern-App: Mit den Karteikarten zu Kapitel 2 beginnen. Wer den Kapiteltest zu Kapitel 1 noch nicht gemacht hat: bitte bis Dienstag nachholen. Und nicht vergessen: Eintrag ins Lerntagebuch!" },
   { date: "29. September 2026", text: "Kursbuch: Seiten 18–20, Aufgaben 1–5. Lern-App: Teil B bearbeiten, dazu je eine Schreib- und Sprechübung. Bitte nicht vergessen: Eintrag ins Lerntagebuch!", pdf: "loesungen/loesungen-2026-09-29.pdf", pdfLabel: "Lösungen zur Hausaufgabe (PDF)" },
   { date: "22. September 2026", text: "Kursbuch: Seiten 16–17, Aufgaben 1–5. Lern-App: Teil A bearbeiten, dazu je eine Schreib- und Sprechübung. Und nicht vergessen: Eintrag ins Lerntagebuch!" }
@@ -4853,10 +4887,15 @@ function renderHausaufgaben(){
     div.innerHTML =
       '<div class="news-date">' + entry.date + '</div>' +
       '<p>' + entry.text + '</p>' +
-      (entry.pdf ? '<p><a href="' + entry.pdf + '" target="_blank" rel="noopener" style="font-weight:700;color:#3f7a5c;">📄 ' + (entry.pdfLabel || 'Lösungen (PDF)') + '</a></p>' : '');
+      (entry.pdf ? '<p><a href="' + entry.pdf + '" target="_blank" rel="noopener" style="font-weight:700;color:#3f7a5c;">📄 ' + (entry.pdfLabel || 'Lösungen (PDF)') + '</a></p>' : '') +
+      (entry.wissen ? '<p><button class="btn-secondary hw-wissen-link" data-wissen="' + entry.wissen + '" style="font-size:0.85rem;margin-top:6px;">💡 ' + (entry.wissenLabel || 'Zur Übung in „Gut zu wissen“') + '</button></p>' : '');
     wrap.appendChild(div);
   });
 }
+document.getElementById("hausaufgabenList").addEventListener("click", (ev)=>{
+  const btn = ev.target.closest(".hw-wissen-link");
+  if(btn) openWissen(btn.getAttribute("data-wissen"));
+});
 function openHausaufgaben(){
   renderHausaufgaben();
   showScreen("hausaufgaben");
@@ -4870,6 +4909,51 @@ document.getElementById("btnHausaufgaben").addEventListener("click", openHausauf
    bei NEWS oben. Jedes Thema: { id, date, titel, einleitung (optional),
    woerter: [ { wort, erklaerung, beispiele: [...] }, ... ] }. */
 const WISSEN = [
+  {
+    /* Thema mit Übung: alte Dichtersprache vs. heutige Umgangssprache.
+       Gedicht gemeinfrei (Goethe 1780); moderne Fassung, Tipps und
+       Musterantwort selbst verfasst (kein Lehrwerksmaterial). */
+    id: "2026-10-goethe-nachtlied",
+    date: "Oktober 2026",
+    titel: "Alte Dichtersprache – heute gesagt",
+    einleitung: "Gedichte von früher klingen oft fremd: manchen Wörtern fehlt ein Buchstabe, Verben haben ein extra -e-, manche Wörter benutzt heute fast niemand mehr. Hier vergleichen wir ein berühmtes Gedicht mit unserer Sprache von heute.",
+    woerter: [],
+    gedicht: {
+      hintergrund: "Am 6. September 1780 wanderte Johann Wolfgang von Goethe (damals 31 Jahre alt) auf den Kickelhahn, einen Berg bei Ilmenau in Thüringen. Oben in einer kleinen Holzhütte schrieb er mit Bleistift ein kurzes Gedicht an die Wand. Über 50 Jahre später, mit 82, stieg er noch einmal hinauf und las es wieder. Heute ist „Wandrers Nachtlied“ eines der bekanntesten Gedichte in deutscher Sprache.",
+      titel: "Wandrers Nachtlied (Ein Gleiches)",
+      quelle: "Johann Wolfgang von Goethe, 1780",
+      zeilen: [
+        "Über allen Gipfeln",
+        "Ist Ruh,",
+        "In allen Wipfeln",
+        "Spürest du",
+        "Kaum einen Hauch;",
+        "Die Vögelein schweigen im Walde.",
+        "Warte nur, balde",
+        "Ruhest du auch."
+      ],
+      woerter: [
+        { alt: "Ruh", neu: "Ruhe", tipp: "Früher ließ man das -e am Ende oft weg, damit der Rhythmus besser passt." },
+        { alt: "Wipfel", neu: "die Spitze eines Baumes", tipp: "Denk an den Wald: Was ist ganz oben an einem Baum?" },
+        { alt: "spürest", neu: "spürst / merkst", tipp: "Alte Verbform: Zwischen Stamm und Endung stand oft ein extra -e-." },
+        { alt: "Vögelein", neu: "kleine Vögel", tipp: "-lein ist eine alte Verkleinerung. Heute sagen wir meistens -chen (Vögelchen) oder einfach „klein“." },
+        { alt: "balde", neu: "bald", tipp: "Das -e am Ende steht nur wegen des Reims: Walde – balde." },
+        { alt: "ruhest", neu: "ruhst / hast Ruhe", tipp: "Wie bei „spürest“: das extra -e- fällt heute weg." }
+      ],
+      modern: [
+        "Oben auf allen Bergen",
+        "ist es jetzt ganz still.",
+        "In den Spitzen der Bäume",
+        "merkst du kaum einen Windhauch.",
+        "Die kleinen Vögel im Wald sind leise.",
+        "Warte nur, bald",
+        "hast auch du deine Ruhe."
+      ],
+      ordnenTipp: "Lies das Original Zeile für Zeile mit: Das Gedicht geht von oben (Berge) nach unten (Bäume, Vögel) – und endet bei dir.",
+      frage: "Lies beide Fassungen noch einmal. Was gefällt dir besser? Was geht in der modernen Sprache verloren? Schreib zwei oder drei Sätze – nur für dich, nichts wird gespeichert.",
+      musterantwort: "Das Original ist kürzer und klingt wie Musik: Es hat Reime (Gipfeln – Wipfeln, Hauch – auch, Walde – balde) und einen ruhigen Rhythmus. Die alten Formen wie „Ruh“ oder „balde“ helfen dabei. Die moderne Fassung ist leichter zu verstehen, aber sie reimt sich nicht und klingt nicht so feierlich. Interessant ist auch die letzte Zeile: „Ruhest du auch“ kann bedeuten, dass man nach einem langen Tag schläft – aber auch, dass jedes Leben einmal zu Ende geht. Diese doppelte Bedeutung hört man im Original besser."
+    }
+  },
   {
     id: "2026-09-kennen-wissen",
     date: "September 2026",
@@ -4913,10 +4997,142 @@ function renderWissenEntry(){
       }
       html += '</div>';
     });
+    if(entry.gedicht) html += renderGedichtHtml(entry.gedicht);
     content.innerHTML = html;
+    if(entry.gedicht) initGedichtUebung(entry.gedicht);
   }
   const counter = document.getElementById("wissenCounter");
   if(counter) counter.textContent = WISSEN.length ? ("Thema " + (wissenIndex+1) + " von " + WISSEN.length) : "";
+}
+/* Gedicht-Übung (alt vs. heute) in "Gut zu wissen":
+   1) Hintergrund + Original, 2) alte Wörter zuordnen (mit Tipp bei Fehler),
+   3) moderne Fassung in die richtige Reihenfolge bringen,
+   4) eigener Vergleich + Musterantwort. Nichts wird übertragen. */
+function gdShuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+function renderGedichtHtml(g){
+  let h = '';
+  h += '<div class="gd-step"><h4>1 · Ein Gedicht von 1780</h4>';
+  h += '<p class="gd-auftrag">' + g.hintergrund + '</p>';
+  h += '<div class="gd-gedicht"><strong>' + g.titel + '</strong><br><br>' + g.zeilen.join('<br>') +
+       '<div class="gd-quelle">' + g.quelle + '</div></div>';
+  h += '<p class="gd-auftrag" style="margin-top:8px;">Lies das Gedicht laut. Keine Sorge, wenn du nicht alles verstehst – das geht auch vielen Deutschen so!</p></div>';
+
+  h += '<div class="gd-step"><h4>2 · Alte Wörter – was heißt das heute?</h4>';
+  h += '<p class="gd-auftrag">Wähle zu jedem alten Wort die heutige Bedeutung. Bei einem Fehler bekommst du einen Tipp.</p>';
+  const opts = gdShuffle(g.woerter.map(w=>w.neu));
+  g.woerter.forEach((w,i)=>{
+    h += '<div class="gd-pair"><span class="gd-alt">' + w.alt + '</span>' +
+         '<select data-gd-i="' + i + '"><option value="">– bitte wählen –</option>' +
+         opts.map(o=>'<option value="' + o + '">' + o + '</option>').join('') + '</select>' +
+         '<span class="gd-tipp" id="gdTipp' + i + '">💡 ' + w.tipp + '</span></div>';
+  });
+  h += '<div class="gd-btns"><button class="btn-primary" id="gdWoerterCheck">Prüfen</button></div>';
+  h += '<p class="gd-msg" id="gdWoerterMsg"></p></div>';
+
+  h += '<div class="gd-step"><h4>3 · Das Gedicht in heutiger Sprache</h4>';
+  h += '<p class="gd-auftrag">So könnte man das Gedicht heute sagen. Aber die Zeilen sind durcheinander! Tippe sie in der richtigen Reihenfolge an. (Nochmal antippen = zurücklegen.)</p>';
+  h += '<div class="gd-answer" id="gdAnswer"></div>';
+  h += '<div class="gd-pool" id="gdPool"></div>';
+  h += '<div class="gd-btns"><button class="btn-primary" id="gdOrdnenCheck">Prüfen</button>' +
+       '<button class="btn-secondary" id="gdOrdnenTipp">Tipp</button>' +
+       '<button class="btn-ghost" id="gdOrdnenReset">Neu mischen</button></div>';
+  h += '<p class="gd-msg" id="gdOrdnenMsg"></p>';
+  h += '<div class="gd-vergleich" id="gdVergleich" style="display:none;">' +
+       '<div class="gd-v-alt"><b>1780</b>' + g.zeilen.join('<br>') + '</div>' +
+       '<div class="gd-v-neu"><b>Heute</b>' + g.modern.join('<br>') + '</div></div></div>';
+
+  h += '<div class="gd-step"><h4>4 · Vergleiche!</h4>';
+  h += '<p class="gd-auftrag">' + g.frage + '</p>';
+  h += '<textarea id="gdText" placeholder="Mir gefällt … besser, weil …"></textarea>';
+  h += '<div class="gd-btns"><button class="btn-secondary" id="gdMusterBtn">Musterantwort zeigen</button></div>';
+  h += '<div class="gd-muster" id="gdMuster">' + g.musterantwort + '</div></div>';
+  return h;
+}
+function initGedichtUebung(g){
+  // Schritt 2
+  document.querySelectorAll('select[data-gd-i]').forEach(sel=>{
+    sel.addEventListener('change', ()=>{ sel.classList.remove('ok','bad'); });
+  });
+  document.getElementById('gdWoerterCheck').addEventListener('click', ()=>{
+    let richtig = 0;
+    document.querySelectorAll('select[data-gd-i]').forEach(sel=>{
+      const i = +sel.getAttribute('data-gd-i');
+      const ok = sel.value === g.woerter[i].neu;
+      sel.classList.remove('ok','bad');
+      if(sel.value) sel.classList.add(ok ? 'ok' : 'bad');
+      document.getElementById('gdTipp'+i).style.display = (!ok && sel.value) ? 'block' : 'none';
+      if(ok) richtig++;
+    });
+    const msg = document.getElementById('gdWoerterMsg');
+    const n = g.woerter.length;
+    msg.className = 'gd-msg ' + (richtig===n ? 'ok' : 'bad');
+    msg.textContent = richtig===n ? '✅ Super, alle ' + n + ' richtig!' : richtig + ' von ' + n + ' richtig. Lies die Tipps und versuch es noch einmal.';
+  });
+  // Schritt 3
+  const pool = document.getElementById('gdPool');
+  const answer = document.getElementById('gdAnswer');
+  let order = [];
+  let rest = [];
+  function draw(){
+    answer.innerHTML = order.length ? '' : '<span class="hint-text" style="margin:4px;text-align:left;">Hier entsteht dein Gedicht …</span>';
+    order.forEach((idx,pos)=>{
+      const b = document.createElement('button');
+      b.className = 'gd-line';
+      b.innerHTML = '<span class="gd-nr">' + (pos+1) + '.</span>' + g.modern[idx];
+      b.addEventListener('click', ()=>{ order.splice(pos,1); rest.push(idx); clearMsg(); draw(); });
+      answer.appendChild(b);
+    });
+    pool.innerHTML = '';
+    rest.forEach((idx,pos)=>{
+      const b = document.createElement('button');
+      b.className = 'gd-line';
+      b.textContent = g.modern[idx];
+      b.addEventListener('click', ()=>{ rest.splice(pos,1); order.push(idx); clearMsg(); draw(); });
+      pool.appendChild(b);
+    });
+  }
+  function clearMsg(){ const m=document.getElementById('gdOrdnenMsg'); m.textContent=''; m.className='gd-msg'; }
+  function reset(){
+    order = [];
+    rest = gdShuffle(g.modern.map((_,i)=>i));
+    if(rest.every((v,i)=>v===i)) rest.reverse();
+    document.getElementById('gdVergleich').style.display = 'none';
+    clearMsg(); draw();
+  }
+  reset();
+  document.getElementById('gdOrdnenReset').addEventListener('click', reset);
+  document.getElementById('gdOrdnenTipp').addEventListener('click', ()=>{
+    const m = document.getElementById('gdOrdnenMsg');
+    m.className = 'gd-msg'; m.style.color = '#8a5a20';
+    m.textContent = '💡 ' + g.ordnenTipp;
+  });
+  document.getElementById('gdOrdnenCheck').addEventListener('click', ()=>{
+    const m = document.getElementById('gdOrdnenMsg');
+    m.style.color = '';
+    if(rest.length){ m.className='gd-msg bad'; m.textContent='Bitte zuerst alle Zeilen antippen.'; return; }
+    let firstWrong = order.findIndex((v,i)=>v!==i);
+    if(firstWrong === -1){
+      m.className='gd-msg ok';
+      m.textContent='✅ Richtig! Vergleiche jetzt beide Fassungen nebeneinander:';
+      document.getElementById('gdVergleich').style.display = 'grid';
+    }else{
+      m.className='gd-msg bad';
+      m.textContent = firstWrong === 0
+        ? 'Noch nicht ganz: Schon die erste Zeile passt nicht. Tippe auf „Tipp“, wenn du Hilfe brauchst.'
+        : 'Fast! ' + (firstWrong===1 ? 'Die erste Zeile stimmt.' : 'Die ersten ' + firstWrong + ' Zeilen stimmen.') + ' Ab Zeile ' + (firstWrong+1) + ' passt die Reihenfolge noch nicht. Tippe die Zeilen ab dort an, um sie zurückzulegen.';
+    }
+  });
+  // Schritt 4
+  document.getElementById('gdMusterBtn').addEventListener('click', ()=>{
+    const box = document.getElementById('gdMuster');
+    const show = box.style.display !== 'block';
+    box.style.display = show ? 'block' : 'none';
+    document.getElementById('gdMusterBtn').textContent = show ? 'Musterantwort ausblenden' : 'Musterantwort zeigen';
+  });
 }
 function updateWissenBadge(){
   const badge = document.getElementById("wissenBadge");
@@ -4926,8 +5142,9 @@ function updateWissenBadge(){
   const hasUnread = WISSEN.length > 0 && WISSEN[0].id !== lastSeen;
   badge.style.display = hasUnread ? "inline-block" : "none";
 }
-function openWissen(){
-  wissenIndex = 0;
+function openWissen(themaId){
+  const idx = themaId ? WISSEN.findIndex(w=>w.id===themaId) : -1;
+  wissenIndex = idx >= 0 ? idx : 0;
   renderWissenEntry();
   showScreen("wissen");
   if(WISSEN.length > 0){
