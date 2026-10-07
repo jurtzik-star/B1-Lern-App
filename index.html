@@ -529,11 +529,11 @@
       <p style="margin-top:0;">Möchtest du eine kurze Erinnerung per E-Mail bekommen?</p>
       <p class="hint-text" style="text-align:left;">Die Mail kommt nur <strong>am Abend</strong> und nur an Tagen, an denen du die Lern-App noch nicht genutzt hast. Sie geht an die E-Mail-Adresse, die du im Kurs angegeben hast. Du kannst deine Wahl hier jederzeit ändern.</p>
       <p id="erinnerungStatus" style="font-weight:700;color:var(--green-900);"></p>
+      <p id="erinnerungMsg" style="display:none;background:#eef8f1;border:2px solid #3f9a64;border-radius:10px;padding:10px 12px;font-weight:700;color:#2f7a4c;text-align:left;"></p>
       <div class="row-btns" style="flex-direction:column;align-items:stretch;gap:8px;">
         <button class="btn-primary" id="btnErinnerungJa">✅ Ja, bitte abends erinnern</button>
         <button class="btn-secondary" id="btnErinnerungNein">🚫 Nein, keine Erinnerungen</button>
       </div>
-      <p class="hint-text" id="erinnerungMsg" style="text-align:left;"></p>
     </div>
   </section>
 
@@ -6481,18 +6481,25 @@ function renderErinnerung(){
             : "Du hast noch nichts ausgewählt – ohne deine Zustimmung bekommst du keine Mails.";
   const st = document.getElementById("erinnerungStatus");
   if(st) st.textContent = txt;
+  // Gewählte Option sperren: verhindert mehrfaches Abschicken derselben Wahl
+  const bJa = document.getElementById("btnErinnerungJa");
+  const bNein = document.getElementById("btnErinnerungNein");
+  if(bJa){ bJa.disabled = (wahl === "ja"); bJa.style.opacity = wahl === "ja" ? "0.5" : ""; }
+  if(bNein){ bNein.disabled = (wahl === "nein"); bNein.style.opacity = wahl === "nein" ? "0.5" : ""; }
   const tile = document.getElementById("erinnerungTileText");
   if(tile) tile.textContent = wahl === "ja" ? "Eingeschaltet – abends eine kurze Mail, wenn du noch nicht geübt hast."
                          : wahl === "nein" ? "Ausgeschaltet. Hier kannst du es jederzeit ändern."
                          : "Abends eine kurze Mail, wenn du an dem Tag noch nicht geübt hast.";
 }
 function openErinnerung(){
-  document.getElementById("erinnerungMsg").textContent = "";
+  const m = document.getElementById("erinnerungMsg");
+  m.textContent = ""; m.style.display = "none";
   renderErinnerung();
   showScreen("erinnerung");
 }
 function setErinnerung(wahl){
   if(!ERINNERUNG_FORM.url || !state.name) return;
+  if(erinnerungLokal() === wahl) return; // gleiche Wahl nicht erneut senden
   const params = new URLSearchParams();
   params.append(ERINNERUNG_FORM.entryName, state.name);
   params.append(ERINNERUNG_FORM.entryWahl, wahl);
@@ -6502,7 +6509,9 @@ function setErinnerung(wahl){
   }catch(e){}
   try{ localStorage.setItem(ERINNERUNG_KEY, JSON.stringify({name: state.name.trim().toLowerCase(), wahl, stand: Date.now()})); }catch(e){}
   renderErinnerung();
-  document.getElementById("erinnerungMsg").textContent = wahl === "ja"
+  const msgEl = document.getElementById("erinnerungMsg");
+  msgEl.style.display = "block";
+  msgEl.textContent = wahl === "ja"
     ? "Gespeichert! Ab heute Abend bekommst du eine Erinnerung, wenn du noch nicht geübt hast."
     : "Gespeichert! Du bekommst ab sofort keine Erinnerungsmails mehr.";
 }
